@@ -3,7 +3,7 @@ import 'package:twelve_week/screens/home_screen.dart';
 
 // Entry point
 void main() {
-  runApp(TwelveWeekYearApp());
+  runApp(const TwelveWeekYearApp());
 }
 
 class TwelveWeekYearApp extends StatelessWidget {
@@ -19,7 +19,7 @@ class TwelveWeekYearApp extends StatelessWidget {
         brightness: Brightness.light,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: HomeScreen(),
+      home: const HomeScreen(),
     );
   }
 }

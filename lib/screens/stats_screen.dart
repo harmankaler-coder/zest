@@ -35,10 +35,10 @@ class StatsScreen extends StatelessWidget {
     if (goals.isEmpty) {
       return Scaffold(
         appBar: _buildGradientAppBar(title: 'Stats'),
-        body: Center(
+        body: const Center(
           child: Text(
             'No goals to show stats for.',
-            style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+            style: TextStyle(fontSize: 18, color: Colors.grey),
           ),
         ),
       );
@@ -47,73 +47,73 @@ class StatsScreen extends StatelessWidget {
     return Scaffold(
       appBar: _buildGradientAppBar(title: 'Stats'),
       body: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: ListView(
           children: goals
               .map(
                 (goal) => Card(
-              elevation: 5,
-              shadowColor: Colors.indigo.shade100,
-              margin: EdgeInsets.symmetric(vertical: 8),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14)),
-              child: ListTile(
-                contentPadding:
-                EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-                title: Text(
-                  goal.title,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.indigo.shade900,
-                  ),
-                ),
-                subtitle: Padding(
-                  padding: EdgeInsets.only(top: 14),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: LinearProgressIndicator(
-                      value: goal.progress,
-                      minHeight: 16,
-                      backgroundColor: Colors.indigo.shade50,
-                      valueColor:
-                      AlwaysStoppedAnimation(Colors.indigo.shade600),
+                  elevation: 5,
+                  shadowColor: Colors.indigo.shade100,
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14)),
+                  child: ListTile(
+                    contentPadding:
+                        const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                    title: Text(
+                      goal.title,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.indigo.shade900,
+                      ),
+                    ),
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 14),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: LinearProgressIndicator(
+                          value: goal.progress,
+                          minHeight: 16,
+                          backgroundColor: Colors.indigo.shade50,
+                          valueColor:
+                              AlwaysStoppedAnimation(Colors.indigo.shade600),
+                        ),
+                      ),
+                    ),
+                    trailing: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.indigo.shade600,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.indigo.shade300.withOpacity(0.6),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          )
+                        ],
+                      ),
+                      padding:
+                          const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      child: Text(
+                        '${goal.completedWeeks}/12',
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(
+                              blurRadius: 4,
+                              color: Colors.indigo.shade900.withOpacity(0.8),
+                              offset: const Offset(0, 1),
+                            )
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
-                trailing: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.indigo.shade600,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.indigo.shade300.withOpacity(0.6),
-                        blurRadius: 8,
-                        offset: Offset(0, 4),
-                      )
-                    ],
-                  ),
-                  padding:
-                  EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  child: Text(
-                    '${goal.completedWeeks}/12',
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      shadows: [
-                        Shadow(
-                          blurRadius: 4,
-                          color: Colors.indigo.shade900.withOpacity(0.8),
-                          offset: Offset(0, 1),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          )
+              )
               .toList(),
         ),
       ),

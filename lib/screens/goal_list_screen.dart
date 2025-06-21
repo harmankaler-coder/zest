@@ -1,16 +1,5 @@
 import 'package:flutter/material.dart';
-
-class Goal {
-  String title;
-  List<bool> weeklyProgress;
-
-  Goal(this.title) : weeklyProgress = List.filled(12, false);
-
-  int get completedWeeks =>
-      weeklyProgress.where((completed) => completed).length;
-
-  double get progress => completedWeeks / 12;
-}
+import '../goal_data.dart';
 
 class GoalListScreen extends StatefulWidget {
   const GoalListScreen({super.key});
@@ -23,10 +12,19 @@ class GoalListScreenState extends State<GoalListScreen> {
   final List<Goal> goals = [];
   final TextEditingController _controller = TextEditingController();
 
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   void _addGoal(String title) {
     if (title.trim().isEmpty) return;
     setState(() {
-      goals.add(Goal(title.trim()));
+      goals.add(Goal(
+        title: title.trim(),
+        startDate: DateTime.now(),
+      ));
     });
     _controller.clear();
   }
@@ -129,7 +127,7 @@ class GoalListScreenState extends State<GoalListScreen> {
               child: Row(
                 children: List.generate(
                   12,
-                      (index) => _buildWeekToggle(goal, index),
+                  (index) => _buildWeekToggle(goal, index),
                 ),
               ),
             ),
@@ -148,19 +146,19 @@ class GoalListScreenState extends State<GoalListScreen> {
       ),
       body: goals.isEmpty
           ? Center(
-        child: Text(
-          'No goals yet.\nTap + to add your first goal!',
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 18, color: Colors.grey[600]),
-        ),
-      )
+              child: Text(
+                'No goals yet.\nTap + to add your first goal!',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+              ),
+            )
           : ListView.builder(
-        padding: EdgeInsets.only(top: 12, bottom: 80),
-        itemCount: goals.length,
-        itemBuilder: (context, index) {
-          return _buildGoalCard(goals[index]);
-        },
-      ),
+              padding: EdgeInsets.only(top: 12, bottom: 80),
+              itemCount: goals.length,
+              itemBuilder: (context, index) {
+                return _buildGoalCard(goals[index]);
+              },
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddGoalDialog,
         tooltip: 'Add Goal',

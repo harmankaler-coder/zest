@@ -65,7 +65,7 @@ class GoalEditScreenState extends State<GoalEditScreen> {
     if (title.isEmpty || selectedDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Please enter title and start date'),
+          content: const Text('Please enter title and start date'),
           behavior: SnackBarBehavior.floating,
           backgroundColor: Colors.indigo.shade400,
         ),
@@ -101,7 +101,7 @@ class GoalEditScreenState extends State<GoalEditScreen> {
         centerTitle: true,
       ),
       body: Padding(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: Column(
           children: [
             TextField(
@@ -109,17 +109,17 @@ class GoalEditScreenState extends State<GoalEditScreen> {
               decoration: InputDecoration(
                 labelText: 'Goal Title',
                 border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 prefixIcon: Icon(Icons.flag, color: Colors.indigo.shade700),
               ),
               maxLength: 50,
-              style: TextStyle(fontSize: 18),
+              style: const TextStyle(fontSize: 18),
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
             Row(
               children: [
-                Icon(Icons.calendar_today_outlined, color: Colors.indigo),
-                SizedBox(width: 16),
+                const Icon(Icons.calendar_today_outlined, color: Colors.indigo),
+                const SizedBox(width: 16),
                 Text(
                   selectedDate == null
                       ? 'Select Start Date'
@@ -129,10 +129,10 @@ class GoalEditScreenState extends State<GoalEditScreen> {
                       fontWeight: FontWeight.w600,
                       color: Colors.indigo.shade900),
                 ),
-                Spacer(),
+                const Spacer(),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 22, vertical: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14)),
                     backgroundColor: Colors.indigo.shade600,
@@ -141,22 +141,22 @@ class GoalEditScreenState extends State<GoalEditScreen> {
                     shadowColor: Colors.indigo.shade300,
                   ),
                   onPressed: pickDate,
-                  child: Text(
+                  child: const Text(
                     'Pick Date',
                     style: TextStyle(fontSize: 16),
                   ),
                 ),
               ],
             ),
-            Spacer(),
+            const Spacer(),
             ElevatedButton.icon(
-              icon: Icon(Icons.save, size: 26,color: Colors.white,),
-              label: Text(
+              icon: const Icon(Icons.save, size: 26, color: Colors.white),
+              label: const Text(
                 'Save Goal',
                 style: TextStyle(fontSize: 20),
               ),
               style: ElevatedButton.styleFrom(
-                minimumSize: Size(double.infinity, 56),
+                minimumSize: const Size(double.infinity, 56),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16)),
                 backgroundColor: Colors.indigo.shade700,

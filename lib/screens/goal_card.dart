@@ -15,7 +15,7 @@ class GoalCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final progressPercent = (goal.progress * 100).toInt();
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
       child: Row(
         children: [
           Expanded(
@@ -32,7 +32,7 @@ class GoalCard extends StatelessWidget {
                     letterSpacing: 0.2,
                   ),
                 ),
-                SizedBox(height: 6),
+                const SizedBox(height: 6),
                 Text(
                   'Start: ${_formatDate(goal.startDate)}',
                   style: TextStyle(
@@ -52,7 +52,7 @@ class GoalCard extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(22),
                   child: AnimatedContainer(
-                    duration: Duration(milliseconds: 400),
+                    duration: const Duration(milliseconds: 400),
                     height: 28,
                     width: 80,
                     decoration: BoxDecoration(
@@ -66,7 +66,7 @@ class GoalCard extends StatelessWidget {
                         BoxShadow(
                           color: Colors.indigo.shade300.withOpacity(0.6),
                           blurRadius: 8,
-                          offset: Offset(0, 3),
+                          offset: const Offset(0, 3),
                         ),
                       ],
                     ),
@@ -101,7 +101,7 @@ class GoalCard extends StatelessWidget {
                         Shadow(
                           blurRadius: 4,
                           color: Colors.indigo.shade900.withOpacity(0.7),
-                          offset: Offset(0, 1),
+                          offset: const Offset(0, 1),
                         )
                       ],
                     ),

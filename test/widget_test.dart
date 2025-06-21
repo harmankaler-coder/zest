@@ -11,20 +11,30 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:twelve_week/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('App launches and shows empty state', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(TwelveWeekYearApp());
+    await tester.pumpWidget(const TwelveWeekYearApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Verify that the app shows the empty state message
+    expect(find.text('No goals yet.\nTap + to add your first goal!'), findsOneWidget);
+    
+    // Verify that the floating action button is present
+    expect(find.byIcon(Icons.add), findsOneWidget);
+    
+    // Verify that the app bar title is present
+    expect(find.text('ZEST'), findsOneWidget);
+  });
 
-    // Tap the '+' icon and trigger a frame.
+  testWidgets('Can navigate to add goal screen', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(const TwelveWeekYearApp());
+
+    // Tap the '+' icon to add a goal
     await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    await tester.pumpAndSettle();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify that we navigated to the add goal screen
+    expect(find.text('Add Goal'), findsOneWidget);
+    expect(find.text('Goal Title'), findsOneWidget);
   });
 }

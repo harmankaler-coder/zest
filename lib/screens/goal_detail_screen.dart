@@ -25,7 +25,7 @@ class GoalDetailScreenState extends State<GoalDetailScreen> with SingleTickerPro
 
     _animationController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 400),
+      duration: const Duration(milliseconds: 400),
     );
   }
 
@@ -53,9 +53,9 @@ class GoalDetailScreenState extends State<GoalDetailScreen> with SingleTickerPro
     return GestureDetector(
       onTap: () => _toggleWeek(index),
       child: AnimatedContainer(
-        duration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.easeOutCubic,
-        margin: EdgeInsets.all(6),
+        margin: const EdgeInsets.all(6),
         width: 52,
         height: 52,
         decoration: BoxDecoration(
@@ -63,11 +63,11 @@ class GoalDetailScreenState extends State<GoalDetailScreen> with SingleTickerPro
           borderRadius: BorderRadius.circular(14),
           boxShadow: completed
               ? [
-            BoxShadow(
-                color: Colors.indigo.shade400.withOpacity(0.7),
-                blurRadius: 12,
-                offset: Offset(0, 6))
-          ]
+                  BoxShadow(
+                      color: Colors.indigo.shade400.withOpacity(0.7),
+                      blurRadius: 12,
+                      offset: const Offset(0, 6))
+                ]
               : [],
         ),
         child: Center(
@@ -79,11 +79,11 @@ class GoalDetailScreenState extends State<GoalDetailScreen> with SingleTickerPro
               fontSize: 20,
               shadows: completed
                   ? [
-                Shadow(
-                    color: Colors.indigo.shade900.withOpacity(0.6),
-                    blurRadius: 4,
-                    offset: Offset(1, 1))
-              ]
+                      Shadow(
+                          color: Colors.indigo.shade900.withOpacity(0.6),
+                          blurRadius: 4,
+                          offset: const Offset(1, 1))
+                    ]
                   : [],
             ),
           ),
@@ -106,7 +106,7 @@ class GoalDetailScreenState extends State<GoalDetailScreen> with SingleTickerPro
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.save),
+            icon: const Icon(Icons.save),
             tooltip: 'Save Progress',
             onPressed: saveAndExit,
             splashRadius: 24,
@@ -126,7 +126,7 @@ class GoalDetailScreenState extends State<GoalDetailScreen> with SingleTickerPro
         centerTitle: true,
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(vertical: 18, horizontal: 22),
+        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 22),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -137,7 +137,7 @@ class GoalDetailScreenState extends State<GoalDetailScreen> with SingleTickerPro
                   color: Colors.indigo.shade700,
                   fontWeight: FontWeight.w600),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
               'Progress: $completedWeeks / 12 weeks',
               style: TextStyle(
@@ -145,7 +145,7 @@ class GoalDetailScreenState extends State<GoalDetailScreen> with SingleTickerPro
                   fontWeight: FontWeight.bold,
                   color: Colors.indigo.shade900),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: LinearProgressIndicator(
@@ -153,10 +153,10 @@ class GoalDetailScreenState extends State<GoalDetailScreen> with SingleTickerPro
                 minHeight: 14,
                 backgroundColor: Colors.indigo.shade100,
                 valueColor:
-                AlwaysStoppedAnimation<Color>(Colors.indigo.shade600),
+                    AlwaysStoppedAnimation<Color>(Colors.indigo.shade600),
               ),
             ),
-            SizedBox(height: 28),
+            const SizedBox(height: 28),
             Text(
               'Mark each week completed:',
               style: TextStyle(
@@ -164,20 +164,20 @@ class GoalDetailScreenState extends State<GoalDetailScreen> with SingleTickerPro
                   fontWeight: FontWeight.w600,
                   color: Colors.indigo.shade800),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Wrap(
               children: List.generate(12, (index) => _buildWeekToggle(index)),
             ),
-            Spacer(),
+            const Spacer(),
             ElevatedButton.icon(
               onPressed: saveAndExit,
-              icon: Icon(Icons.save, size: 28,color: Colors.white,),
-              label: Text(
+              icon: const Icon(Icons.save, size: 28, color: Colors.white),
+              label: const Text(
                 'Save Progress',
-                style: TextStyle(fontSize: 20,color: Colors.white),
+                style: TextStyle(fontSize: 20, color: Colors.white),
               ),
               style: ElevatedButton.styleFrom(
-                minimumSize: Size(double.infinity, 56),
+                minimumSize: const Size(double.infinity, 56),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(18)),
                 backgroundColor: Colors.indigo.shade700,
