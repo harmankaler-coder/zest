@@ -9,7 +9,9 @@ import 'weekly_planning_screen.dart';
 import 'settings_screen.dart';
 
 class EnhancedHomeScreen extends StatefulWidget {
-  const EnhancedHomeScreen({super.key});
+  final Function(ThemeMode)? onThemeChanged;
+
+  const EnhancedHomeScreen({super.key, this.onThemeChanged});
 
   @override
   State<EnhancedHomeScreen> createState() => _EnhancedHomeScreenState();
@@ -205,7 +207,7 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
         goals: goals,
         onGoalUpdated: _updateGoal,
       ),
-      const SettingsScreen(),
+      SettingsScreen(onThemeChanged: widget.onThemeChanged),
     ];
 
     return Scaffold(

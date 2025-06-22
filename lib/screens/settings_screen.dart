@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../services/storage_service.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+  final Function(ThemeMode)? onThemeChanged;
+
+  const SettingsScreen({super.key, this.onThemeChanged});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -35,6 +37,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
       settings[key] = value;
     });
     _saveSettings();
+    
+    // Handle theme changes
+    if (key == 'theme_mode' && widget.onThemeChanged != null) {
+      ThemeMode themeMode;
+      switch (value) {
+        case 'light':
+          themeMode = ThemeMode.light;
+          break;
+        case 'dark':
+          themeMode = ThemeMode.dark;
+          break;
+        case 'system':
+        default:
+          themeMode = ThemeMode.system;
+          break;
+      }
+      widget.onThemeChanged!(themeMode);
+    }
   }
 
   @override
@@ -98,34 +118,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
           ),
           
-          // Data Section
-          _buildSection(
-            'Data',
-            [
-              ListTile(
-                leading: const Icon(Icons.backup),
-                title: const Text('Export Data'),
-                subtitle: const Text('Export your goals and progress'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => _exportData(),
-              ),
-              ListTile(
-                leading: const Icon(Icons.restore),
-                title: const Text('Import Data'),
-                subtitle: const Text('Import goals from backup'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => _importData(),
-              ),
-              ListTile(
-                leading: const Icon(Icons.delete_forever, color: Colors.red),
-                title: const Text('Clear All Data', style: TextStyle(color: Colors.red)),
-                subtitle: const Text('Delete all goals and settings'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => _showClearDataDialog(),
-              ),
-            ],
-          ),
-          
           // Help Section
           _buildSection(
             'Help & Support',
@@ -143,6 +135,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 subtitle: const Text('Help us improve the app'),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => _sendFeedback(),
+              ),
+            ],
+          ),
+          
+          // Data Management Section
+          _buildSection(
+            'Data Management',
+            [
+              ListTile(
+                leading: const Icon(Icons.delete_forever, color: Colors.red),
+                title: const Text('Clear All Data', style: TextStyle(color: Colors.red)),
+                subtitle: const Text('Delete all goals and settings'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => _showClearDataDialog(),
               ),
             ],
           ),
@@ -242,6 +248,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             RadioListTile<String>(
               title: const Text('Light'),
+              subtitle: const Text('Always use light theme'),
               value: 'light',
               groupValue: settings['theme_mode'] ?? 'system',
               onChanged: (value) {
@@ -251,6 +258,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             RadioListTile<String>(
               title: const Text('Dark'),
+              subtitle: const Text('Always use dark theme'),
               value: 'dark',
               groupValue: settings['theme_mode'] ?? 'system',
               onChanged: (value) {
@@ -260,6 +268,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             RadioListTile<String>(
               title: const Text('System Default'),
+              subtitle: const Text('Follow system theme'),
               value: 'system',
               groupValue: settings['theme_mode'] ?? 'system',
               onChanged: (value) {
@@ -269,24 +278,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  void _exportData() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Export feature coming soon!'),
-        backgroundColor: Colors.blue,
-      ),
-    );
-  }
-
-  void _importData() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Import feature coming soon!'),
-        backgroundColor: Colors.blue,
       ),
     );
   }
@@ -306,15 +297,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
-              // TODO: Implement clear data functionality
+            onPressed: () async {
+              // Clear all data
+              await StorageService.saveGoals([]);
+              await StorageService.saveSettings({
+                'notifications_enabled': true,
+                'weekly_review_day': 0,
+                'theme_mode': 'system',
+              });
+              
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Clear data feature coming soon!'),
-                  backgroundColor: Colors.orange,
+                  content: Text('All data cleared successfully'),
+                  backgroundColor: Colors.green,
                 ),
               );
+              
+              // Reset theme to system default
+              if (widget.onThemeChanged != null) {
+                widget.onThemeChanged!(ThemeMode.system);
+              }
             },
             child: const Text('Clear Data', style: TextStyle(color: Colors.red)),
           ),
