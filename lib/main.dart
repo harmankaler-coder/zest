@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'screens/enhanced_home_screen.dart';
+import 'screens/splash_screen.dart';
 import 'services/storage_service.dart';
 
 void main() {
@@ -16,11 +17,13 @@ class TwelveWeekYearApp extends StatefulWidget {
 
 class _TwelveWeekYearAppState extends State<TwelveWeekYearApp> {
   ThemeMode _themeMode = ThemeMode.system;
+  bool _showSplash = true;
 
   @override
   void initState() {
     super.initState();
     _loadThemeMode();
+    _checkFirstLaunch();
   }
 
   Future<void> _loadThemeMode() async {
@@ -39,6 +42,28 @@ class _TwelveWeekYearAppState extends State<TwelveWeekYearApp> {
           _themeMode = ThemeMode.system;
           break;
       }
+    });
+  }
+
+  Future<void> _checkFirstLaunch() async {
+    final settings = await StorageService.loadSettings();
+    final hasSeenSplash = settings['has_seen_splash'] ?? false;
+    
+    if (hasSeenSplash) {
+      setState(() {
+        _showSplash = false;
+      });
+    }
+  }
+
+  Future<void> _onGetStarted() async {
+    // Mark that user has seen the splash screen
+    final settings = await StorageService.loadSettings();
+    settings['has_seen_splash'] = true;
+    await StorageService.saveSettings(settings);
+    
+    setState(() {
+      _showSplash = false;
     });
   }
 
@@ -128,7 +153,9 @@ class _TwelveWeekYearAppState extends State<TwelveWeekYearApp> {
           ),
         ),
       ),
-      home: EnhancedHomeScreen(onThemeChanged: updateThemeMode),
+      home: _showSplash 
+          ? SplashScreen(onGetStarted: _onGetStarted)
+          : EnhancedHomeScreen(onThemeChanged: updateThemeMode),
     );
   }
 }
