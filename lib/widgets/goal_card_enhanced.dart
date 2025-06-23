@@ -25,9 +25,9 @@ class GoalCardEnhanced extends StatelessWidget {
   Color _getCategoryColor() {
     switch (goal.category) {
       case GoalCategory.personal:
-        return Colors.blue;
+        return const Color(0xFF667eea);
       case GoalCategory.professional:
-        return Colors.purple;
+        return const Color(0xFF764ba2);
       case GoalCategory.health:
         return Colors.green;
       case GoalCategory.financial:
@@ -155,13 +155,22 @@ class GoalCardEnhanced extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 4),
-                  LinearProgressIndicator(
-                    value: goal.progress,
-                    backgroundColor: Colors.grey[300],
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      goal.isCompleted ? Colors.green : Colors.indigo,
+                  Container(
+                    height: 6,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(3),
+                      gradient: LinearGradient(
+                        colors: goal.isCompleted 
+                            ? [Colors.green, Colors.green]
+                            : [const Color(0xFF667eea), const Color(0xFF764ba2)],
+                      ),
                     ),
-                    minHeight: 6,
+                    child: LinearProgressIndicator(
+                      value: goal.progress,
+                      backgroundColor: Colors.grey[300],
+                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.transparent),
+                      minHeight: 6,
+                    ),
                   ),
                 ],
               ),

@@ -88,8 +88,6 @@ class _GoalCreationWizardState extends State<GoalCreationWizard> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create New Goal'),
-        backgroundColor: Colors.indigo,
-        foregroundColor: Colors.white,
         elevation: 0,
       ),
       body: Column(
@@ -104,7 +102,7 @@ class _GoalCreationWizardState extends State<GoalCreationWizard> {
                     height: 4,
                     margin: EdgeInsets.only(right: index < 4 ? 8 : 0),
                     decoration: BoxDecoration(
-                      color: index <= _currentPage ? Colors.indigo : Colors.grey[300],
+                      color: index <= _currentPage ? const Color(0xFF667eea) : Colors.grey[300],
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -141,13 +139,26 @@ class _GoalCreationWizardState extends State<GoalCreationWizard> {
                   ),
                 if (_currentPage > 0) const SizedBox(width: 16),
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: _currentPage == 4 ? _createGoal : _nextPage,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.indigo,
-                      foregroundColor: Colors.white,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Color(0xFF667eea),
+                          Color(0xFF764ba2),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
                     ),
-                    child: Text(_currentPage == 4 ? 'Create Goal' : 'Next'),
+                    child: ElevatedButton(
+                      onPressed: _currentPage == 4 ? _createGoal : _nextPage,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                      ),
+                      child: Text(_currentPage == 4 ? 'Create Goal' : 'Next'),
+                    ),
                   ),
                 ),
               ],
@@ -252,8 +263,8 @@ class _GoalCreationWizardState extends State<GoalCreationWizard> {
                 onSelected: (selected) {
                   if (selected) setState(() => _category = category);
                 },
-                selectedColor: Colors.indigo.withOpacity(0.2),
-                checkmarkColor: Colors.indigo,
+                selectedColor: const Color(0xFF667eea).withOpacity(0.2),
+                checkmarkColor: const Color(0xFF667eea),
               );
             }).toList(),
           ),
@@ -273,7 +284,7 @@ class _GoalCreationWizardState extends State<GoalCreationWizard> {
                 onChanged: (value) {
                   if (value != null) setState(() => _priority = value);
                 },
-                activeColor: Colors.indigo,
+                activeColor: const Color(0xFF667eea),
               );
             }).toList(),
           ),
@@ -453,7 +464,7 @@ class _GoalCreationWizardState extends State<GoalCreationWizard> {
                   style: const TextStyle(
                     fontSize: 48,
                     fontWeight: FontWeight.bold,
-                    color: Colors.indigo,
+                    color: Color(0xFF667eea),
                   ),
                 ),
                 Slider(
@@ -461,7 +472,7 @@ class _GoalCreationWizardState extends State<GoalCreationWizard> {
                   min: 50,
                   max: 100,
                   divisions: 10,
-                  activeColor: Colors.indigo,
+                  activeColor: const Color(0xFF667eea),
                   onChanged: (value) => setState(() => _targetScore = value),
                 ),
                 Text(
