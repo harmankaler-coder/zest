@@ -41,13 +41,19 @@ class StorageService {
           'notifications_enabled': true,
           'weekly_review_day': 0, // Sunday
           'theme_mode': 'system',
+          'has_seen_splash': false,
         };
       }
       
       return json.decode(settingsJson);
     } catch (e) {
       print('Error loading settings: $e');
-      return {};
+      return {
+        'notifications_enabled': true,
+        'weekly_review_day': 0,
+        'theme_mode': 'system',
+        'has_seen_splash': false,
+      };
     }
   }
 

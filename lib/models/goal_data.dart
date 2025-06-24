@@ -88,12 +88,15 @@ class Goal {
     whyReasons = whyReasons ?? [];
 
   int get completedWeeks => weeklyProgress.where((completed) => completed).length;
-  double get progress => completedWeeks / 12;
+  double get progress {
+    final progressValue = completedWeeks / 12;
+    return progressValue.isNaN || progressValue.isInfinite ? 0.0 : progressValue;
+  }
   
   int get currentWeek {
     final now = DateTime.now();
     if (now.isBefore(startDate)) return 0;
-    if (now.isAfter(endDate)) return 12;
+    if (now.isAfter(endDate)) return 11; // Changed from 12 to 11 (0-based index)
     
     final daysDiff = now.difference(startDate).inDays;
     return (daysDiff / 7).floor().clamp(0, 11);
@@ -110,7 +113,8 @@ class Goal {
       completedActions += weeklyActions[i].where((action) => action.isCompleted).length;
     }
     
-    return totalActions > 0 ? (completedActions / totalActions) * 100 : 0.0;
+    final score = totalActions > 0 ? (completedActions / totalActions) * 100 : 0.0;
+    return score.isNaN || score.isInfinite ? 0.0 : score;
   }
 
   bool get isOnTrack => executionScore >= targetScore;
@@ -118,7 +122,8 @@ class Goal {
   int get daysRemaining {
     final now = DateTime.now();
     if (now.isAfter(endDate)) return 0;
-    return endDate.difference(now).inDays;
+    final remaining = endDate.difference(now).inDays;
+    return remaining < 0 ? 0 : remaining;
   }
 
   String get categoryDisplayName {

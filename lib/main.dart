@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'screens/enhanced_home_screen.dart';
 import 'screens/splash_screen.dart';
-import 'services/storage_services.dart';
+import 'services/storage_service.dart';
 
 void main() {
   runApp(const TwelveWeekYearApp());
