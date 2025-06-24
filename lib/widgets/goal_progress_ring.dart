@@ -17,42 +17,40 @@ class GoalProgressRing extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  SizedBox(
-                    width: 80,
-                    height: 100,
-                    child: CircularProgressIndicator(
-                      value: progress.isNaN || progress.isInfinite ? 0.0 : progress,
-                      strokeWidth: 8,
-                      backgroundColor: Colors.grey[300],
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        goal.isOnTrack ? Colors.green : Colors.red,
-                      ),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                SizedBox(
+                  width: 80,
+                  height: 80,
+                  child: CircularProgressIndicator(
+                    value: progress.isNaN || progress.isInfinite ? 0.0 : progress,
+                    strokeWidth: 8,
+                    backgroundColor: Colors.grey[300],
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      goal.isOnTrack ? Colors.green : Colors.red,
                     ),
                   ),
-                  Column(
-                    children: [
-                      Text(
-                        '${((progress.isNaN || progress.isInfinite ? 0.0 : progress) * 100).toInt()}%',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                ),
+                Column(
+                  children: [
+                    Text(
+                      '${((progress.isNaN || progress.isInfinite ? 0.0 : progress) * 100).toInt()}%',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
-                      Text(
-                        '${(executionScore.isNaN || executionScore.isInfinite ? 0.0 : executionScore).toInt()}%',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
+                    ),
+                    Text(
+                      '${(executionScore.isNaN || executionScore.isInfinite ? 0.0 : executionScore).toInt()}%',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ),
 
             const SizedBox(height: 12),
