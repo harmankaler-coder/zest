@@ -32,7 +32,7 @@ class DashboardScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header Stats
-              _buildStatsOverview(activeGoals, completedGoals, averageExecution, onTrackGoals),
+              buildStatsOverview(activeGoals, completedGoals, averageExecution, onTrackGoals),
 
               const SizedBox(height: 24),
 
@@ -64,7 +64,7 @@ class DashboardScreen extends StatelessWidget {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.red),
                 ),
                 const SizedBox(height: 16),
-                ...urgentGoals.map((goal) => _buildUrgentGoalCard(goal)),
+                ...urgentGoals.map((goal) => buildUrgentGoalCard(goal)),
                 const SizedBox(height: 24),
               ],
 
@@ -97,12 +97,12 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatsOverview(List<Goal> activeGoals, List<Goal> completedGoals,
+  Widget buildStatsOverview(List<Goal> activeGoals, List<Goal> completedGoals,
       double averageExecution, int onTrackGoals) {
     return Row(
       children: [
         Expanded(
-          child: _buildStatCard(
+          child: buildStatCard(
             'Active Goals',
             '${activeGoals.length}',
             Icons.flag,
@@ -111,7 +111,7 @@ class DashboardScreen extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: _buildStatCard(
+          child: buildStatCard(
             'Completed',
             '${completedGoals.length}',
             Icons.check_circle,
@@ -120,7 +120,7 @@ class DashboardScreen extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: _buildStatCard(
+          child: buildStatCard(
             'Avg Execution',
             '${averageExecution.toInt()}%',
             Icons.trending_up,
@@ -129,7 +129,7 @@ class DashboardScreen extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: _buildStatCard(
+          child: buildStatCard(
             'On Track',
             '$onTrackGoals/${activeGoals.length}',
             Icons.track_changes,
@@ -140,7 +140,7 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(String title, String value, IconData icon, Color color) {
+  Widget buildStatCard(String title, String value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -173,7 +173,7 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildUrgentGoalCard(Goal goal) {
+  Widget buildUrgentGoalCard(Goal goal) {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(

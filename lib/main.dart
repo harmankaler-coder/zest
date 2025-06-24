@@ -12,64 +12,64 @@ class TwelveWeekYearApp extends StatefulWidget {
   const TwelveWeekYearApp({super.key});
 
   @override
-  State<TwelveWeekYearApp> createState() => _TwelveWeekYearAppState();
+  State<TwelveWeekYearApp> createState() => TwelveWeekYearAppState();
 }
 
-class _TwelveWeekYearAppState extends State<TwelveWeekYearApp> {
-  ThemeMode _themeMode = ThemeMode.system;
-  bool _showSplash = true;
+class TwelveWeekYearAppState extends State<TwelveWeekYearApp> {
+  ThemeMode themeMode = ThemeMode.system;
+  bool showSplash = true;
 
   @override
   void initState() {
     super.initState();
-    _loadThemeMode();
-    _checkFirstLaunch();
+    loadThemeMode();
+    checkFirstLaunch();
   }
 
-  Future<void> _loadThemeMode() async {
+  Future<void> loadThemeMode() async {
     final settings = await StorageService.loadSettings();
     final themeMode = settings['theme_mode'] ?? 'system';
     setState(() {
       switch (themeMode) {
         case 'light':
-          _themeMode = ThemeMode.light;
+          this.themeMode = ThemeMode.light;
           break;
         case 'dark':
-          _themeMode = ThemeMode.dark;
+          this.themeMode = ThemeMode.dark;
           break;
         case 'system':
         default:
-          _themeMode = ThemeMode.system;
+          this.themeMode = ThemeMode.system;
           break;
       }
     });
   }
 
-  Future<void> _checkFirstLaunch() async {
+  Future<void> checkFirstLaunch() async {
     final settings = await StorageService.loadSettings();
     final hasSeenSplash = settings['has_seen_splash'] ?? false;
 
     if (hasSeenSplash) {
       setState(() {
-        _showSplash = false;
+        showSplash = false;
       });
     }
   }
 
-  Future<void> _onGetStarted() async {
+  Future<void> onGetStarted() async {
     // Mark that user has seen the splash screen
     final settings = await StorageService.loadSettings();
     settings['has_seen_splash'] = true;
     await StorageService.saveSettings(settings);
 
     setState(() {
-      _showSplash = false;
+      showSplash = false;
     });
   }
 
   void updateThemeMode(ThemeMode themeMode) {
     setState(() {
-      _themeMode = themeMode;
+      this.themeMode = themeMode;
     });
   }
 
@@ -78,7 +78,7 @@ class _TwelveWeekYearAppState extends State<TwelveWeekYearApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: '12 Week Year',
-      themeMode: _themeMode,
+      themeMode: themeMode,
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
         brightness: Brightness.light,
@@ -161,8 +161,8 @@ class _TwelveWeekYearAppState extends State<TwelveWeekYearApp> {
           unselectedItemColor: Colors.grey,
         ),
       ),
-      home: _showSplash
-          ? SplashScreen(onGetStarted: _onGetStarted)
+      home: showSplash
+          ? SplashScreen(onGetStarted: onGetStarted)
           : EnhancedHomeScreen(onThemeChanged: updateThemeMode),
     );
   }
