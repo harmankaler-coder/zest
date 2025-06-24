@@ -84,39 +84,20 @@ class _TwelveWeekYearAppState extends State<TwelveWeekYearApp> {
         brightness: Brightness.light,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         textTheme: GoogleFonts.interTextTheme(),
-        appBarTheme: AppBarTheme(
-          backgroundColor: Colors.transparent,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF667eea),
           foregroundColor: Colors.white,
           elevation: 0,
           centerTitle: true,
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFF667eea),
-                  Color(0xFF764ba2),
-                ],
-              ),
-            ),
-          ),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.transparent,
+            backgroundColor: const Color(0xFF667eea),
             foregroundColor: Colors.white,
-            shadowColor: Colors.transparent,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          ).copyWith(
-            backgroundColor: MaterialStateProperty.resolveWith<Color>(
-              (Set<MaterialState> states) {
-                return Colors.transparent;
-              },
-            ),
           ),
         ),
         cardTheme: CardTheme(
@@ -144,39 +125,20 @@ class _TwelveWeekYearAppState extends State<TwelveWeekYearApp> {
         brightness: Brightness.dark,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
-        appBarTheme: AppBarTheme(
-          backgroundColor: Colors.transparent,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF2C3E50),
           foregroundColor: Colors.white,
           elevation: 0,
           centerTitle: true,
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFF2C3E50),
-                  Color(0xFF4A6741),
-                ],
-              ),
-            ),
-          ),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.transparent,
+            backgroundColor: const Color(0xFF667eea),
             foregroundColor: Colors.white,
-            shadowColor: Colors.transparent,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          ).copyWith(
-            backgroundColor: MaterialStateProperty.resolveWith<Color>(
-              (Set<MaterialState> states) {
-                return Colors.transparent;
-              },
-            ),
           ),
         ),
         cardTheme: CardTheme(
