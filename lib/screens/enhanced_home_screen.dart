@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/goal_data.dart';
 import '../services/storage_services.dart';
-import '../services/storage_services.dart';
 import '../widgets/goal_card_enhanced.dart';
 import 'goal_creation_wizard.dart';
 import 'goal_detail_enhanced.dart';
@@ -120,14 +119,27 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
               ),
             ),
             const SizedBox(height: 32),
-            ElevatedButton.icon(
-              onPressed: _navigateToGoalCreation,
-              icon: const Icon(Icons.add),
-              label: const Text('Create Your First Goal'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.indigo,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFF667eea),
+                    Color(0xFF764ba2),
+                  ],
+                ),
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+              ),
+              child: ElevatedButton.icon(
+                onPressed: _navigateToGoalCreation,
+                icon: const Icon(Icons.add),
+                label: const Text('Create Your First Goal'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                ),
               ),
             ),
           ],
@@ -214,8 +226,6 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('12 Week Year'),
-        backgroundColor: Colors.indigo,
-        foregroundColor: Colors.white,
         elevation: 0,
         actions: [
           if (_selectedIndex == 0)
@@ -234,8 +244,6 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
         type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
         onTap: (index) => setState(() => _selectedIndex = index),
-        selectedItemColor: Colors.indigo,
-        unselectedItemColor: Colors.grey,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.flag),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:twelve_week/services/storage_services.dart';
 import 'screens/enhanced_home_screen.dart';
+import 'screens/splash_screen.dart';
 import 'services/storage_services.dart';
 
 void main() {
@@ -17,11 +17,13 @@ class TwelveWeekYearApp extends StatefulWidget {
 
 class _TwelveWeekYearAppState extends State<TwelveWeekYearApp> {
   ThemeMode _themeMode = ThemeMode.system;
+  bool _showSplash = true;
 
   @override
   void initState() {
     super.initState();
     _loadThemeMode();
+    _checkFirstLaunch();
   }
 
   Future<void> _loadThemeMode() async {
@@ -43,6 +45,28 @@ class _TwelveWeekYearAppState extends State<TwelveWeekYearApp> {
     });
   }
 
+  Future<void> _checkFirstLaunch() async {
+    final settings = await StorageService.loadSettings();
+    final hasSeenSplash = settings['has_seen_splash'] ?? false;
+
+    if (hasSeenSplash) {
+      setState(() {
+        _showSplash = false;
+      });
+    }
+  }
+
+  Future<void> _onGetStarted() async {
+    // Mark that user has seen the splash screen
+    final settings = await StorageService.loadSettings();
+    settings['has_seen_splash'] = true;
+    await StorageService.saveSettings(settings);
+
+    setState(() {
+      _showSplash = false;
+    });
+  }
+
   void updateThemeMode(ThemeMode themeMode) {
     setState(() {
       _themeMode = themeMode;
@@ -56,19 +80,19 @@ class _TwelveWeekYearAppState extends State<TwelveWeekYearApp> {
       title: '12 Week Year',
       themeMode: _themeMode,
       theme: ThemeData(
-        primarySwatch: Colors.indigo,
+        primarySwatch: Colors.deepPurple,
         brightness: Brightness.light,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         textTheme: GoogleFonts.interTextTheme(),
         appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.indigo,
+          backgroundColor: Color(0xFF667eea),
           foregroundColor: Colors.white,
           elevation: 0,
           centerTitle: true,
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.indigo,
+            backgroundColor: const Color(0xFF667eea),
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -88,24 +112,28 @@ class _TwelveWeekYearAppState extends State<TwelveWeekYearApp> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Colors.indigo, width: 2),
+            borderSide: const BorderSide(color: Color(0xFF667eea), width: 2),
           ),
+        ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          selectedItemColor: Color(0xFF667eea),
+          unselectedItemColor: Colors.grey,
         ),
       ),
       darkTheme: ThemeData(
-        primarySwatch: Colors.indigo,
+        primarySwatch: Colors.deepPurple,
         brightness: Brightness.dark,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
         appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.indigo,
+          backgroundColor: Color(0xFF2C3E50),
           foregroundColor: Colors.white,
           elevation: 0,
           centerTitle: true,
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.indigo,
+            backgroundColor: const Color(0xFF667eea),
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -125,11 +153,17 @@ class _TwelveWeekYearAppState extends State<TwelveWeekYearApp> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Colors.indigo, width: 2),
+            borderSide: const BorderSide(color: Color(0xFF667eea), width: 2),
           ),
         ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          selectedItemColor: Color(0xFF667eea),
+          unselectedItemColor: Colors.grey,
+        ),
       ),
-      home: EnhancedHomeScreen(onThemeChanged: updateThemeMode),
+      home: _showSplash
+          ? SplashScreen(onGetStarted: _onGetStarted)
+          : EnhancedHomeScreen(onThemeChanged: updateThemeMode),
     );
   }
 }

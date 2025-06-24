@@ -8,8 +8,8 @@ class GoalProgressRing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = goal.progress;
-    final executionScore = goal.executionScore;
+    final progress = goal.progress.clamp(0.0, 1.0);
+    final executionScore = goal.executionScore.clamp(0.0, 100.0);
 
     return Card(
       child: Padding(
@@ -24,7 +24,7 @@ class GoalProgressRing extends StatelessWidget {
                   width: 80,
                   height: 80,
                   child: CircularProgressIndicator(
-                    value: progress,
+                    value: progress.isNaN || progress.isInfinite ? 0.0 : progress,
                     strokeWidth: 8,
                     backgroundColor: Colors.grey[300],
                     valueColor: AlwaysStoppedAnimation<Color>(
@@ -35,14 +35,14 @@ class GoalProgressRing extends StatelessWidget {
                 Column(
                   children: [
                     Text(
-                      '${(progress * 100).toInt()}%',
+                      '${((progress.isNaN || progress.isInfinite ? 0.0 : progress) * 100).toInt()}%',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
-                      '${executionScore.toInt()}%',
+                      '${(executionScore.isNaN || executionScore.isInfinite ? 0.0 : executionScore).toInt()}%',
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey[600],
@@ -69,7 +69,7 @@ class GoalProgressRing extends StatelessWidget {
             const SizedBox(height: 4),
 
             Text(
-              'Week ${goal.currentWeek + 1}/12',
+              'Week ${(goal.currentWeek + 1).clamp(1, 12)}/12',
               style: TextStyle(
                 fontSize: 12,
                 color: Colors.grey[600],
