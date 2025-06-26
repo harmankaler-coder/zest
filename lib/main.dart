@@ -57,7 +57,6 @@ class _TwelveWeekYearAppState extends State<TwelveWeekYearApp> {
   }
 
   Future<void> _onGetStarted() async {
-    // Mark that user has seen the splash screen
     final settings = await StorageService.loadSettings();
     settings['has_seen_splash'] = true;
     await StorageService.saveSettings(settings);
@@ -84,15 +83,27 @@ class _TwelveWeekYearAppState extends State<TwelveWeekYearApp> {
         brightness: Brightness.light,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         textTheme: GoogleFonts.interTextTheme(),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF667eea),
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.transparent,
           foregroundColor: Colors.white,
           elevation: 0,
           centerTitle: true,
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFF667eea),
+                  Color(0xFF764ba2),
+                ],
+              ),
+            ),
+          ),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF667eea),
+            backgroundColor: Colors.transparent,
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -125,15 +136,27 @@ class _TwelveWeekYearAppState extends State<TwelveWeekYearApp> {
         brightness: Brightness.dark,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF2C3E50),
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.transparent,
           foregroundColor: Colors.white,
           elevation: 0,
           centerTitle: true,
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFF2C3E50),
+                  Color(0xFF34495E),
+                ],
+              ),
+            ),
+          ),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF667eea),
+            backgroundColor: Colors.transparent,
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),

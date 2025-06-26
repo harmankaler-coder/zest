@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/goal_data.dart';
+import 'package:intl/intl.dart';
 
 class WeeklyActionTile extends StatelessWidget {
   final WeeklyAction action;
@@ -22,6 +23,9 @@ class WeeklyActionTile extends StatelessWidget {
           value: action.isCompleted,
           onChanged: (_) => onToggle(),
           activeColor: Colors.green,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4),
+          ),
         ),
         title: Text(
           action.description,
@@ -35,12 +39,22 @@ class WeeklyActionTile extends StatelessWidget {
           ),
         ),
         subtitle: action.completedDate != null
-            ? Text(
-                'Completed: ${action.completedDate!.toString().split(' ')[0]}',
-                style: const TextStyle(
-                  color: Colors.green,
-                  fontSize: 12,
-                ),
+            ? Row(
+                children: [
+                  Icon(
+                    Icons.check_circle,
+                    size: 16,
+                    color: Colors.green,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Completed: ${DateFormat('MMM dd').format(action.completedDate!)}',
+                    style: const TextStyle(
+                      color: Colors.green,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
               )
             : null,
         trailing: PopupMenuButton(
@@ -52,6 +66,16 @@ class WeeklyActionTile extends StatelessWidget {
                   Icon(Icons.edit),
                   SizedBox(width: 8),
                   Text('Edit'),
+                ],
+              ),
+            ),
+            const PopupMenuItem(
+              value: 'notes',
+              child: Row(
+                children: [
+                  Icon(Icons.note_add),
+                  SizedBox(width: 8),
+                  Text('Add Notes'),
                 ],
               ),
             ),
@@ -68,12 +92,37 @@ class WeeklyActionTile extends StatelessWidget {
           ],
           onSelected: (value) {
             if (value == 'delete') {
-              onDelete();
+              _showDeleteConfirmation(context);
             } else if (value == 'edit') {
               _showEditDialog(context);
+            } else if (value == 'notes') {
+              _showNotesDialog(context);
             }
           },
         ),
+      ),
+    );
+  }
+
+  void _showDeleteConfirmation(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Action'),
+        content: const Text('Are you sure you want to delete this action?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              onDelete();
+            },
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
       ),
     );
   }
@@ -98,14 +147,72 @@ class WeeklyActionTile extends StatelessWidget {
             onPressed: () => Navigator.pop(context),
             child: const Text('Cancel'),
           ),
-          ElevatedButton(
-            onPressed: () {
-              if (controller.text.trim().isNotEmpty) {
-                action.description = controller.text.trim();
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF667eea), Color(0xFF764ba2)],
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+            ),
+            child: ElevatedButton(
+              onPressed: () {
+                if (controller.text.trim().isNotEmpty) {
+                  action.description = controller.text.trim();
+                  Navigator.pop(context);
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+              ),
+              child: const Text('Save'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showNotesDialog(BuildContext context) {
+    final controller = TextEditingController(text: action.notes ?? '');
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Action Notes'),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(
+            hintText: 'Add notes about this action...',
+            border: OutlineInputBorder(),
+          ),
+          maxLines: 4,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF667eea), Color(0xFF764ba2)],
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+            ),
+            child: ElevatedButton(
+              onPressed: () {
+                action.notes = controller.text.trim().isNotEmpty 
+                    ? controller.text.trim() 
+                    : null;
                 Navigator.pop(context);
-              }
-            },
-            child: const Text('Save'),
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+              ),
+              child: const Text('Save'),
+            ),
           ),
         ],
       ),
