@@ -3,8 +3,13 @@ import '../services/storage_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   final Function(ThemeMode)? onThemeChanged;
+  final VoidCallback? onDataCleared;
 
-  const SettingsScreen({super.key, this.onThemeChanged});
+  const SettingsScreen({
+    super.key, 
+    this.onThemeChanged,
+    this.onDataCleared,
+  });
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -54,6 +59,53 @@ class _SettingsScreenState extends State<SettingsScreen> {
           break;
       }
       widget.onThemeChanged!(themeMode);
+    }
+  }
+
+  Future<void> _clearAllData() async {
+    try {
+      // Clear all data
+      await StorageService.saveGoals([]);
+      await StorageService.saveSettings({
+        'notifications_enabled': true,
+        'weekly_review_day': 0,
+        'theme_mode': 'system',
+        'has_seen_splash': true, // Keep splash as seen
+      });
+      
+      // Update local settings
+      setState(() {
+        settings = {
+          'notifications_enabled': true,
+          'weekly_review_day': 0,
+          'theme_mode': 'system',
+          'has_seen_splash': true,
+        };
+      });
+      
+      // Notify parent about data clearing
+      if (widget.onDataCleared != null) {
+        widget.onDataCleared!();
+      }
+      
+      // Reset theme to system default
+      if (widget.onThemeChanged != null) {
+        widget.onThemeChanged!(ThemeMode.system);
+      }
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('All data cleared successfully'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error clearing data: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -298,26 +350,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           TextButton(
             onPressed: () async {
-              // Clear all data
-              await StorageService.saveGoals([]);
-              await StorageService.saveSettings({
-                'notifications_enabled': true,
-                'weekly_review_day': 0,
-                'theme_mode': 'system',
-              });
-              
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('All data cleared successfully'),
-                  backgroundColor: Colors.green,
-                ),
-              );
-              
-              // Reset theme to system default
-              if (widget.onThemeChanged != null) {
-                widget.onThemeChanged!(ThemeMode.system);
-              }
+              await _clearAllData();
             },
             child: const Text('Clear Data', style: TextStyle(color: Colors.red)),
           ),

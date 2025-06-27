@@ -30,6 +30,24 @@ class _WeeklyPlanningScreenState extends State<WeeklyPlanningScreen> {
     }
   }
 
+  @override
+  void didUpdateWidget(WeeklyPlanningScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Update selected goal if goals list changed
+    if (selectedGoal != null) {
+      final updatedGoal = widget.goals.firstWhere(
+        (g) => g.id == selectedGoal!.id,
+        orElse: () {
+          final activeGoals = widget.goals.where((g) => !g.isCompleted).toList();
+          return activeGoals.isNotEmpty ? activeGoals.first : Goal(title: '', startDate: DateTime.now());
+        },
+      );
+      if (updatedGoal.title.isNotEmpty) {
+        selectedGoal = updatedGoal;
+      }
+    }
+  }
+
   void _addAction() {
     if (selectedGoal == null) return;
 
@@ -135,6 +153,12 @@ class _WeeklyPlanningScreenState extends State<WeeklyPlanningScreen> {
       );
     }
 
+    // Ensure selectedGoal is valid
+    if (selectedGoal == null || !activeGoals.contains(selectedGoal)) {
+      selectedGoal = activeGoals.first;
+      selectedWeek = selectedGoal!.currentWeek;
+    }
+
     return Scaffold(
       body: Column(
         children: [
@@ -173,24 +197,30 @@ class _WeeklyPlanningScreenState extends State<WeeklyPlanningScreen> {
                     color: Colors.white.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: DropdownButton<Goal>(
-                    value: selectedGoal,
+                  child: DropdownButton<String>(
+                    value: selectedGoal?.id,
                     isExpanded: true,
                     dropdownColor: Colors.white,
                     style: const TextStyle(color: Colors.black),
                     underline: Container(),
                     icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
                     items: activeGoals.map((goal) {
-                      return DropdownMenuItem(
-                        value: goal,
-                        child: Text(goal.title),
+                      return DropdownMenuItem<String>(
+                        value: goal.id,
+                        child: Text(
+                          goal.title,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       );
                     }).toList(),
-                    onChanged: (goal) {
-                      setState(() {
-                        selectedGoal = goal;
-                        selectedWeek = goal?.currentWeek ?? 0;
-                      });
+                    onChanged: (goalId) {
+                      if (goalId != null) {
+                        final goal = activeGoals.firstWhere((g) => g.id == goalId);
+                        setState(() {
+                          selectedGoal = goal;
+                          selectedWeek = goal.currentWeek;
+                        });
+                      }
                     },
                   ),
                 ),
@@ -198,208 +228,206 @@ class _WeeklyPlanningScreenState extends State<WeeklyPlanningScreen> {
             ),
           ),
           
-          if (selectedGoal != null) ...[
-            // Week Selector
-            Container(
-              height: 60,
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: 12,
-                itemBuilder: (context, index) {
-                  final isCurrentWeek = index == selectedGoal!.currentWeek;
-                  final isSelected = index == selectedWeek;
-                  final isCompleted = selectedGoal!.weeklyProgress[index];
-                  
-                  return GestureDetector(
-                    onTap: () => setState(() => selectedWeek = index),
-                    child: Container(
-                      width: 60,
-                      margin: const EdgeInsets.symmetric(horizontal: 4),
-                      decoration: BoxDecoration(
-                        gradient: isSelected 
-                            ? const LinearGradient(
-                                colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-                              )
-                            : null,
-                        color: !isSelected 
-                            ? (isCompleted 
-                                ? Colors.green.withOpacity(0.2)
-                                : Colors.grey.withOpacity(0.1))
-                            : null,
-                        borderRadius: BorderRadius.circular(8),
-                        border: isCurrentWeek 
-                            ? Border.all(color: Colors.orange, width: 2)
-                            : null,
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'W${index + 1}',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: isSelected ? Colors.white : Colors.black87,
-                            ),
-                          ),
-                          if (isCompleted)
-                            Icon(
-                              Icons.check,
-                              size: 16,
-                              color: isSelected ? Colors.white : Colors.green,
-                            ),
-                        ],
-                      ),
+          // Week Selector
+          Container(
+            height: 60,
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: 12,
+              itemBuilder: (context, index) {
+                final isCurrentWeek = index == selectedGoal!.currentWeek;
+                final isSelected = index == selectedWeek;
+                final isCompleted = selectedGoal!.weeklyProgress[index];
+                
+                return GestureDetector(
+                  onTap: () => setState(() => selectedWeek = index),
+                  child: Container(
+                    width: 60,
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    decoration: BoxDecoration(
+                      gradient: isSelected 
+                          ? const LinearGradient(
+                              colors: [Color(0xFF667eea), Color(0xFF764ba2)],
+                            )
+                          : null,
+                      color: !isSelected 
+                          ? (isCompleted 
+                              ? Colors.green.withOpacity(0.2)
+                              : Colors.grey.withOpacity(0.1))
+                          : null,
+                      borderRadius: BorderRadius.circular(8),
+                      border: isCurrentWeek 
+                          ? Border.all(color: Colors.orange, width: 2)
+                          : null,
                     ),
-                  );
-                },
-              ),
-            ),
-            
-            // Actions List
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Week ${selectedWeek + 1} Actions',
-                          style: const TextStyle(
-                            fontSize: 20,
+                          'W${index + 1}',
+                          style: TextStyle(
                             fontWeight: FontWeight.bold,
+                            color: isSelected ? Colors.white : Colors.black87,
                           ),
                         ),
-                        Container(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-                            ),
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                        if (isCompleted)
+                          Icon(
+                            Icons.check,
+                            size: 16,
+                            color: isSelected ? Colors.white : Colors.green,
                           ),
-                          child: IconButton(
-                            onPressed: _addAction,
-                            icon: const Icon(Icons.add, color: Colors.white),
-                          ),
-                        ),
                       ],
                     ),
-                    
-                    const SizedBox(height: 16),
-                    
-                    if (selectedGoal!.weeklyActions[selectedWeek].isEmpty)
-                      Container(
-                        padding: const EdgeInsets.all(32),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
+                  ),
+                );
+              },
+            ),
+          ),
+          
+          // Actions List
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Week ${selectedWeek + 1} Actions',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
                         ),
-                        child: const Center(
-                          child: Column(
-                            children: [
-                              Icon(Icons.add_task, size: 48, color: Colors.grey),
-                              SizedBox(height: 8),
-                              Text(
-                                'No actions planned for this week',
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                              Text(
-                                'Tap + to add your first action',
-                                style: TextStyle(color: Colors.grey, fontSize: 12),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    else
-                      ...selectedGoal!.weeklyActions[selectedWeek].map((action) {
-                        return WeeklyActionTile(
-                          action: action,
-                          onToggle: () => _toggleAction(action),
-                          onDelete: () => _deleteAction(action),
-                        );
-                      }),
-                    
-                    const SizedBox(height: 24),
-                    
-                    // Weekly Reflection
-                    const Text(
-                      'Weekly Reflection',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 8),
-                    TextField(
-                      maxLines: 4,
-                      decoration: const InputDecoration(
-                        hintText: 'What did you learn this week? What will you do differently?',
-                        border: OutlineInputBorder(),
                       ),
-                      controller: TextEditingController(
-                        text: selectedGoal!.weeklyReflections[selectedWeek],
-                      ),
-                      onChanged: _updateReflection,
-                    ),
-                    
-                    const SizedBox(height: 16),
-                    
-                    // Week Completion Button
-                    if (!selectedGoal!.weeklyProgress[selectedWeek])
-                      SizedBox(
-                        width: double.infinity,
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [Colors.green, Colors.green],
-                            ),
-                            borderRadius: BorderRadius.all(Radius.circular(12)),
-                          ),
-                          child: ElevatedButton(
-                            onPressed: selectedGoal!.weeklyActions[selectedWeek].isNotEmpty
-                                ? _markWeekComplete
-                                : null,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.transparent,
-                              shadowColor: Colors.transparent,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                            ),
-                            child: const Text(
-                              'Mark Week as Complete',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ),
-                      )
-                    else
                       Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        decoration: BoxDecoration(
-                          color: Colors.green.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Color(0xFF667eea), Color(0xFF764ba2)],
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
                         ),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                        child: IconButton(
+                          onPressed: _addAction,
+                          icon: const Icon(Icons.add, color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                  
+                  const SizedBox(height: 16),
+                  
+                  if (selectedGoal!.weeklyActions[selectedWeek].isEmpty)
+                    Container(
+                      padding: const EdgeInsets.all(32),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Center(
+                        child: Column(
                           children: [
-                            Icon(Icons.check_circle, color: Colors.green),
-                            SizedBox(width: 8),
+                            Icon(Icons.add_task, size: 48, color: Colors.grey),
+                            SizedBox(height: 8),
                             Text(
-                              'Week Completed',
-                              style: TextStyle(
-                                color: Colors.green,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              'No actions planned for this week',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                            Text(
+                              'Tap + to add your first action',
+                              style: TextStyle(color: Colors.grey, fontSize: 12),
                             ),
                           ],
                         ),
                       ),
-                  ],
-                ),
+                    )
+                  else
+                    ...selectedGoal!.weeklyActions[selectedWeek].map((action) {
+                      return WeeklyActionTile(
+                        action: action,
+                        onToggle: () => _toggleAction(action),
+                        onDelete: () => _deleteAction(action),
+                      );
+                    }),
+                  
+                  const SizedBox(height: 24),
+                  
+                  // Weekly Reflection
+                  const Text(
+                    'Weekly Reflection',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    maxLines: 4,
+                    decoration: const InputDecoration(
+                      hintText: 'What did you learn this week? What will you do differently?',
+                      border: OutlineInputBorder(),
+                    ),
+                    controller: TextEditingController(
+                      text: selectedGoal!.weeklyReflections[selectedWeek],
+                    ),
+                    onChanged: _updateReflection,
+                  ),
+                  
+                  const SizedBox(height: 16),
+                  
+                  // Week Completion Button
+                  if (!selectedGoal!.weeklyProgress[selectedWeek])
+                    SizedBox(
+                      width: double.infinity,
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Colors.green, Colors.green],
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                        ),
+                        child: ElevatedButton(
+                          onPressed: selectedGoal!.weeklyActions[selectedWeek].isNotEmpty
+                              ? _markWeekComplete
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                          ),
+                          child: const Text(
+                            'Mark Week as Complete',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    )
+                  else
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.green.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.check_circle, color: Colors.green),
+                          SizedBox(width: 8),
+                          Text(
+                            'Week Completed',
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
               ),
             ),
-          ],
+          ),
         ],
       ),
     );

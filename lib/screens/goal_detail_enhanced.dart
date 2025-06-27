@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import '../models/goal_data.dart';
 import '../widgets/goal_progress_chart.dart';
 import '../widgets/weekly_action_tile.dart';
+import 'goal_creation_wizard.dart';
 
 class GoalDetailEnhanced extends StatefulWidget {
   final Goal goal;
@@ -32,7 +33,11 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
   }
 
   void _updateGoal() {
-    Navigator.pop(context, goal);
+    Navigator.pop(context, {'action': 'update', 'goal': goal});
+  }
+
+  void _deleteGoal() {
+    Navigator.pop(context, {'action': 'delete', 'goal': goal});
   }
 
   void _toggleGoalCompletion() {
@@ -41,6 +46,21 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
       goal.completedDate = goal.isCompleted ? DateTime.now() : null;
     });
     _updateGoal();
+  }
+
+  void _editGoal() async {
+    final updatedGoal = await Navigator.of(context).push<Goal>(
+      MaterialPageRoute(
+        builder: (context) => GoalEditWizard(goal: goal),
+      ),
+    );
+    
+    if (updatedGoal != null) {
+      setState(() {
+        goal = updatedGoal;
+      });
+      _updateGoal();
+    }
   }
 
   void _addWeeklyAction(int weekIndex) {
@@ -66,18 +86,25 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
       appBar: AppBar(
         title: Text(goal.title),
         flexibleSpace: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                Color(0xFF667eea),
-                Color(0xFF764ba2),
-              ],
+              colors: isDark
+                  ? [
+                      const Color(0xFF2C3E50),
+                      const Color(0xFF34495E),
+                    ]
+                  : [
+                      const Color(0xFF667eea),
+                      const Color(0xFF764ba2),
+                    ],
             ),
           ),
         ),
@@ -114,6 +141,8 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
             onSelected: (value) {
               if (value == 'delete') {
                 _showDeleteConfirmation();
+              } else if (value == 'edit') {
+                _editGoal();
               }
             },
           ),
@@ -269,7 +298,7 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      Icon(Icons.play_arrow, color: Colors.green, size: 20),
+                      const Icon(Icons.play_arrow, color: Colors.green, size: 20),
                       const SizedBox(width: 8),
                       Text('Started: ${DateFormat('MMM dd, yyyy').format(goal.startDate)}'),
                     ],
@@ -277,7 +306,7 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      Icon(Icons.flag, color: Colors.red, size: 20),
+                      const Icon(Icons.flag, color: Colors.red, size: 20),
                       const SizedBox(width: 8),
                       Text('Target: ${DateFormat('MMM dd, yyyy').format(goal.endDate)}'),
                     ],
@@ -286,7 +315,7 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        Icon(Icons.check_circle, color: Colors.green, size: 20),
+                        const Icon(Icons.check_circle, color: Colors.green, size: 20),
                         const SizedBox(width: 8),
                         Text('Completed: ${DateFormat('MMM dd, yyyy').format(goal.completedDate!)}'),
                       ],
@@ -737,11 +766,241 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
           TextButton(
             onPressed: () {
               Navigator.pop(context); // Close dialog
-              Navigator.pop(context, null); // Return to previous screen
+              _deleteGoal(); // Delete and return to previous screen
             },
             child: const Text('Delete', style: TextStyle(color: Colors.red)),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// Goal Edit Wizard
+class GoalEditWizard extends StatefulWidget {
+  final Goal goal;
+
+  const GoalEditWizard({super.key, required this.goal});
+
+  @override
+  State<GoalEditWizard> createState() => _GoalEditWizardState();
+}
+
+class _GoalEditWizardState extends State<GoalEditWizard> {
+  late TextEditingController _titleController;
+  late TextEditingController _descriptionController;
+  late TextEditingController _visionController;
+  late List<TextEditingController> _whyControllers;
+  
+  late DateTime _startDate;
+  late GoalCategory _category;
+  late Priority _priority;
+  late double _targetScore;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController(text: widget.goal.title);
+    _descriptionController = TextEditingController(text: widget.goal.description);
+    _visionController = TextEditingController(text: widget.goal.vision ?? '');
+    
+    _whyControllers = List.generate(3, (index) {
+      return TextEditingController(
+        text: index < widget.goal.whyReasons.length 
+            ? widget.goal.whyReasons[index] 
+            : '',
+      );
+    });
+    
+    _startDate = widget.goal.startDate;
+    _category = widget.goal.category;
+    _priority = widget.goal.priority;
+    _targetScore = widget.goal.targetScore;
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _visionController.dispose();
+    for (var controller in _whyControllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
+  void _saveGoal() {
+    if (_titleController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a goal title')),
+      );
+      return;
+    }
+
+    final updatedGoal = Goal(
+      id: widget.goal.id,
+      title: _titleController.text.trim(),
+      description: _descriptionController.text.trim(),
+      startDate: _startDate,
+      endDate: _startDate.add(const Duration(days: 84)),
+      category: _category,
+      priority: _priority,
+      targetScore: _targetScore,
+      vision: _visionController.text.trim().isNotEmpty 
+          ? _visionController.text.trim() 
+          : null,
+      whyReasons: _whyControllers
+          .map((c) => c.text.trim())
+          .where((text) => text.isNotEmpty)
+          .toList(),
+    );
+
+    // Copy over existing progress and actions
+    updatedGoal.weeklyProgress = widget.goal.weeklyProgress;
+    updatedGoal.weeklyActions = widget.goal.weeklyActions;
+    updatedGoal.weeklyReflections = widget.goal.weeklyReflections;
+    updatedGoal.isCompleted = widget.goal.isCompleted;
+    updatedGoal.completedDate = widget.goal.completedDate;
+
+    Navigator.of(context).pop(updatedGoal);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Edit Goal'),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: isDark
+                  ? [
+                      const Color(0xFF2C3E50),
+                      const Color(0xFF34495E),
+                    ]
+                  : [
+                      const Color(0xFF667eea),
+                      const Color(0xFF764ba2),
+                    ],
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: _saveGoal,
+            child: const Text(
+              'Save',
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: _titleController,
+              decoration: const InputDecoration(
+                labelText: 'Goal Title',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            
+            const SizedBox(height: 16),
+            
+            TextField(
+              controller: _descriptionController,
+              decoration: const InputDecoration(
+                labelText: 'Description',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 3,
+            ),
+            
+            const SizedBox(height: 16),
+            
+            const Text('Category', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: GoalCategory.values.map((category) {
+                final isSelected = _category == category;
+                return FilterChip(
+                  label: Text(Goal(title: '', startDate: DateTime.now(), category: category).categoryDisplayName),
+                  selected: isSelected,
+                  onSelected: (selected) {
+                    if (selected) setState(() => _category = category);
+                  },
+                  selectedColor: const Color(0xFF667eea).withOpacity(0.2),
+                  checkmarkColor: const Color(0xFF667eea),
+                );
+              }).toList(),
+            ),
+            
+            const SizedBox(height: 16),
+            
+            const Text('Priority', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            ...Priority.values.map((priority) {
+              return RadioListTile<Priority>(
+                title: Text(priority.name.toUpperCase()),
+                value: priority,
+                groupValue: _priority,
+                onChanged: (value) {
+                  if (value != null) setState(() => _priority = value);
+                },
+                activeColor: const Color(0xFF667eea),
+              );
+            }),
+            
+            const SizedBox(height: 16),
+            
+            TextField(
+              controller: _visionController,
+              decoration: const InputDecoration(
+                labelText: 'Vision Statement',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 3,
+            ),
+            
+            const SizedBox(height: 16),
+            
+            const Text('Why Reasons', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            ...List.generate(3, (index) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: TextField(
+                  controller: _whyControllers[index],
+                  decoration: InputDecoration(
+                    labelText: 'Reason ${index + 1}',
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+              );
+            }),
+            
+            const SizedBox(height: 16),
+            
+            const Text('Target Execution Score', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            Slider(
+              value: _targetScore,
+              min: 50,
+              max: 100,
+              divisions: 10,
+              label: '${_targetScore.toInt()}%',
+              activeColor: const Color(0xFF667eea),
+              onChanged: (value) => setState(() => _targetScore = value),
+            ),
+          ],
+        ),
       ),
     );
   }

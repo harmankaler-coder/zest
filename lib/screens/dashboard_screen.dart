@@ -11,6 +11,7 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final activeGoals = goals.where((g) => !g.isCompleted).toList();
     final completedGoals = goals.where((g) => g.isCompleted).toList();
     
@@ -22,6 +23,27 @@ class DashboardScreen extends StatelessWidget {
     final urgentGoals = activeGoals.where((g) => g.daysRemaining < 14).toList();
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Dashboard'),
+        automaticallyImplyLeading: false,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: isDark
+                  ? [
+                      const Color(0xFF2C3E50),
+                      const Color(0xFF34495E),
+                    ]
+                  : [
+                      const Color(0xFF667eea),
+                      const Color(0xFF764ba2),
+                    ],
+            ),
+          ),
+        ),
+      ),
       body: RefreshIndicator(
         onRefresh: () async {
           // Refresh logic would go here
@@ -179,7 +201,7 @@ class DashboardScreen extends StatelessWidget {
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: Colors.red.withOpacity(0.1),
-          child: Icon(Icons.warning, color: Colors.red),
+          child: const Icon(Icons.warning, color: Colors.red),
         ),
         title: Text(goal.title),
         subtitle: Text('${goal.daysRemaining} days remaining'),

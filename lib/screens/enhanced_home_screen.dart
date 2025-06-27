@@ -75,13 +75,18 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
   }
 
   void _navigateToGoalDetail(Goal goal) async {
-    final updatedGoal = await Navigator.of(context).push<Goal>(
+    final result = await Navigator.of(context).push<Map<String, dynamic>>(
       MaterialPageRoute(
         builder: (context) => GoalDetailEnhanced(goal: goal),
       ),
     );
-    if (updatedGoal != null) {
-      _updateGoal(updatedGoal);
+    
+    if (result != null) {
+      if (result['action'] == 'update') {
+        _updateGoal(result['goal']);
+      } else if (result['action'] == 'delete') {
+        _deleteGoal(result['goal']);
+      }
     }
   }
 
@@ -213,6 +218,8 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     final screens = [
       _buildGoalsList(),
       DashboardScreen(goals: goals),
@@ -220,13 +227,37 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
         goals: goals,
         onGoalUpdated: _updateGoal,
       ),
-      SettingsScreen(onThemeChanged: widget.onThemeChanged),
+      SettingsScreen(
+        onThemeChanged: widget.onThemeChanged,
+        onDataCleared: () {
+          setState(() {
+            goals.clear();
+          });
+        },
+      ),
     ];
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('12 Week Year'),
         elevation: 0,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: isDark
+                  ? [
+                      const Color(0xFF2C3E50),
+                      const Color(0xFF34495E),
+                    ]
+                  : [
+                      const Color(0xFF667eea),
+                      const Color(0xFF764ba2),
+                    ],
+            ),
+          ),
+        ),
         actions: [
           if (_selectedIndex == 0)
             IconButton(
