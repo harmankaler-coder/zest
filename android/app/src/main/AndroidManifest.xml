@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="twelve_week"
+        android:label="Zest"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

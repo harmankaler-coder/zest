@@ -1,5 +1,5 @@
-name: twelve_week
-description: "A new Flutter project."
+name: Zest
+description: "A comprehensive 12 Week Year goal tracking application."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -38,6 +38,7 @@ dependencies:
   shared_preferences: ^2.2.2
   fl_chart: ^0.68.0
   intl: ^0.19.0
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
@@ -54,6 +55,10 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/zest_main.png"  # <-- Put your icon here
 flutter:
 
   # The following line ensures that the Material Icons font is
