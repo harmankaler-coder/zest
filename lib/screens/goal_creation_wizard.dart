@@ -88,7 +88,9 @@ class _GoalCreationWizardState extends State<GoalCreationWizard> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create New Goal'),
-        elevation: 0,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Colors.white,
+        elevation: 2,
       ),
       body: Column(
         children: [
