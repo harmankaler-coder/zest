@@ -75,13 +75,18 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
   }
 
   void _navigateToGoalDetail(Goal goal) async {
-    final updatedGoal = await Navigator.of(context).push<Goal>(
+    final result = await Navigator.of(context).push<Map<String, dynamic>>(
       MaterialPageRoute(
         builder: (context) => GoalDetailEnhanced(goal: goal),
       ),
     );
-    if (updatedGoal != null) {
-      _updateGoal(updatedGoal);
+
+    if (result != null) {
+      if (result['action'] == 'update') {
+        _updateGoal(result['goal']);
+      } else if (result['action'] == 'delete') {
+        _deleteGoal(result['goal']);
+      }
     }
   }
 
@@ -119,28 +124,10 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
               ),
             ),
             const SizedBox(height: 32),
-            Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFF667eea),
-                    Color(0xFF764ba2),
-                  ],
-                ),
-                borderRadius: BorderRadius.all(Radius.circular(12)),
-              ),
-              child: ElevatedButton.icon(
-                onPressed: _navigateToGoalCreation,
-                icon: const Icon(Icons.add),
-                label: const Text('Create Your First Goal'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                ),
-              ),
+            ElevatedButton.icon(
+              onPressed: _navigateToGoalCreation,
+              icon: const Icon(Icons.add),
+              label: const Text('Create Your First Goal'),
             ),
           ],
         ),
@@ -220,13 +207,19 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
         goals: goals,
         onGoalUpdated: _updateGoal,
       ),
-      SettingsScreen(onThemeChanged: widget.onThemeChanged),
+      SettingsScreen(
+        onThemeChanged: widget.onThemeChanged,
+        onDataCleared: () {
+          setState(() {
+            goals.clear();
+          });
+        },
+      ),
     ];
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('12 Week Year'),
-        elevation: 0,
         actions: [
           if (_selectedIndex == 0)
             IconButton(

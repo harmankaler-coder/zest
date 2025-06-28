@@ -12,64 +12,63 @@ class TwelveWeekYearApp extends StatefulWidget {
   const TwelveWeekYearApp({super.key});
 
   @override
-  State<TwelveWeekYearApp> createState() => TwelveWeekYearAppState();
+  State<TwelveWeekYearApp> createState() => _TwelveWeekYearAppState();
 }
 
-class TwelveWeekYearAppState extends State<TwelveWeekYearApp> {
-  ThemeMode themeMode = ThemeMode.system;
-  bool showSplash = true;
+class _TwelveWeekYearAppState extends State<TwelveWeekYearApp> {
+  ThemeMode _themeMode = ThemeMode.system;
+  bool _showSplash = true;
 
   @override
   void initState() {
     super.initState();
-    loadThemeMode();
-    checkFirstLaunch();
+    _loadThemeMode();
+    _checkFirstLaunch();
   }
 
-  Future<void> loadThemeMode() async {
+  Future<void> _loadThemeMode() async {
     final settings = await StorageService.loadSettings();
     final themeMode = settings['theme_mode'] ?? 'system';
     setState(() {
       switch (themeMode) {
         case 'light':
-          this.themeMode = ThemeMode.light;
+          _themeMode = ThemeMode.light;
           break;
         case 'dark':
-          this.themeMode = ThemeMode.dark;
+          _themeMode = ThemeMode.dark;
           break;
         case 'system':
         default:
-          this.themeMode = ThemeMode.system;
+          _themeMode = ThemeMode.system;
           break;
       }
     });
   }
 
-  Future<void> checkFirstLaunch() async {
+  Future<void> _checkFirstLaunch() async {
     final settings = await StorageService.loadSettings();
     final hasSeenSplash = settings['has_seen_splash'] ?? false;
 
     if (hasSeenSplash) {
       setState(() {
-        showSplash = false;
+        _showSplash = false;
       });
     }
   }
 
-  Future<void> onGetStarted() async {
-    // Mark that user has seen the splash screen
+  Future<void> _onGetStarted() async {
     final settings = await StorageService.loadSettings();
     settings['has_seen_splash'] = true;
     await StorageService.saveSettings(settings);
 
     setState(() {
-      showSplash = false;
+      _showSplash = false;
     });
   }
 
   void updateThemeMode(ThemeMode themeMode) {
     setState(() {
-      this.themeMode = themeMode;
+      _themeMode = themeMode;
     });
   }
 
@@ -78,17 +77,23 @@ class TwelveWeekYearAppState extends State<TwelveWeekYearApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: '12 Week Year',
-      themeMode: themeMode,
+      themeMode: _themeMode,
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
+        primaryColor: const Color(0xFF667eea),
         brightness: Brightness.light,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         textTheme: GoogleFonts.interTextTheme(),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF667eea),
+        appBarTheme: AppBarTheme(
+          backgroundColor: const Color(0xFF667eea),
           foregroundColor: Colors.white,
-          elevation: 0,
+          elevation: 2,
           centerTitle: true,
+          titleTextStyle: GoogleFonts.inter(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
@@ -118,18 +123,31 @@ class TwelveWeekYearAppState extends State<TwelveWeekYearApp> {
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           selectedItemColor: Color(0xFF667eea),
           unselectedItemColor: Colors.grey,
+        ),
+        colorScheme: const ColorScheme.light(
+          primary: Color(0xFF667eea),
+          secondary: Color(0xFF764ba2),
+          surface: Colors.white,
+          background: Color(0xFFF5F5F5),
         ),
       ),
       darkTheme: ThemeData(
         primarySwatch: Colors.deepPurple,
+        primaryColor: const Color(0xFF667eea),
         brightness: Brightness.dark,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF2C3E50),
+        scaffoldBackgroundColor: const Color(0xFF121212),
+        appBarTheme: AppBarTheme(
+          backgroundColor: const Color(0xFF1E1E1E),
           foregroundColor: Colors.white,
-          elevation: 0,
+          elevation: 2,
           centerTitle: true,
+          titleTextStyle: GoogleFonts.inter(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
@@ -146,23 +164,52 @@ class TwelveWeekYearAppState extends State<TwelveWeekYearApp> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
+          color: const Color(0xFF1E1E1E),
         ),
         inputDecorationTheme: InputDecorationTheme(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFF333333)),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFF333333)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: const BorderSide(color: Color(0xFF667eea), width: 2),
           ),
+          fillColor: const Color(0xFF1E1E1E),
+          filled: true,
         ),
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           selectedItemColor: Color(0xFF667eea),
           unselectedItemColor: Colors.grey,
+          backgroundColor: Color(0xFF1E1E1E),
+          type: BottomNavigationBarType.fixed,
+        ),
+        colorScheme: const ColorScheme.dark(
+          primary: Color(0xFF667eea),
+          secondary: Color(0xFF764ba2),
+          surface: Color(0xFF1E1E1E),
+          background: Color(0xFF121212),
+          onSurface: Colors.white,
+          onBackground: Colors.white,
+        ),
+        dialogTheme: const DialogThemeData(
+          backgroundColor: Color(0xFF1E1E1E),
+        ),
+        popupMenuTheme: const PopupMenuThemeData(
+          color: Color(0xFF1E1E1E),
+        ),
+        dropdownMenuTheme: const DropdownMenuThemeData(
+          menuStyle: MenuStyle(
+            backgroundColor: MaterialStatePropertyAll(Color(0xFF1E1E1E)),
+          ),
         ),
       ),
-      home: showSplash
-          ? SplashScreen(onGetStarted: onGetStarted)
+      home: _showSplash
+          ? SplashScreen(onGetStarted: _onGetStarted)
           : EnhancedHomeScreen(onThemeChanged: updateThemeMode),
     );
   }

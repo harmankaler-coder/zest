@@ -61,15 +61,15 @@ class _SplashScreenState extends State<SplashScreen>
             end: Alignment.bottomRight,
             colors: isDark
                 ? [
-                    const Color(0xFF1A1A2E),
-                    const Color(0xFF16213E),
-                    const Color(0xFF0F3460),
-                  ]
+              const Color(0xFF121212),
+              const Color(0xFF1E1E1E),
+              const Color(0xFF2C2C2C),
+            ]
                 : [
-                    const Color(0xFF667eea),
-                    const Color(0xFF764ba2),
-                    const Color(0xFF6B73FF),
-                  ],
+              const Color(0xFF667eea),
+              const Color(0xFF764ba2),
+              const Color(0xFF6B73FF),
+            ],
           ),
         ),
         child: SafeArea(
@@ -179,7 +179,7 @@ class _SplashScreenState extends State<SplashScreen>
                             onPressed: widget.onGetStarted,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
-                              foregroundColor: const Color(0xFF667eea),
+                              foregroundColor: isDark ? const Color(0xFF121212) : const Color(0xFF667eea),
                               elevation: 8,
                               shadowColor: Colors.black.withOpacity(0.3),
                               shape: RoundedRectangleBorder(
@@ -196,7 +196,9 @@ class _SplashScreenState extends State<SplashScreen>
                             ),
                           ),
                         ),
+
                         const SizedBox(height: 16),
+
                         Text(
                           'Start your transformation journey today',
                           style: GoogleFonts.inter(

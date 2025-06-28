@@ -39,8 +39,8 @@ class WeeklyAction {
   };
 
   factory WeeklyAction.fromJson(Map<String, dynamic> json) => WeeklyAction(
-    id: json['id'],
-    description: json['description'],
+    id: json['id'] ?? DateTime.now().millisecondsSinceEpoch.toString(),
+    description: json['description'] ?? '',
     isCompleted: json['isCompleted'] ?? false,
     completedDate: json['completedDate'] != null
         ? DateTime.parse(json['completedDate'])
@@ -58,13 +58,13 @@ class Goal {
   GoalCategory category;
   Priority priority;
   List<bool> weeklyProgress;
-  List<List<WeeklyAction>> weeklyActions; // Actions for each week
-  List<String> weeklyReflections; // Weekly reflection notes
-  double targetScore; // Target execution score (0-100)
+  List<List<WeeklyAction>> weeklyActions;
+  List<String> weeklyReflections;
+  double targetScore;
   bool isCompleted;
   DateTime? completedDate;
-  String? vision; // Personal vision statement
-  List<String> whyReasons; // Why this goal matters
+  String? vision;
+  List<String> whyReasons;
 
   Goal({
     String? id,
@@ -81,25 +81,28 @@ class Goal {
     List<String>? whyReasons,
   }) :
         id = id ?? DateTime.now().millisecondsSinceEpoch.toString(),
-        endDate = endDate ?? startDate.add(const Duration(days: 84)), // 12 weeks
+        endDate = endDate ?? startDate.add(const Duration(days: 84)),
         weeklyProgress = List.filled(12, false),
         weeklyActions = List.generate(12, (index) => <WeeklyAction>[]),
         weeklyReflections = List.filled(12, ''),
         whyReasons = whyReasons ?? [];
 
   int get completedWeeks => weeklyProgress.where((completed) => completed).length;
+
   double get progress {
-    final progressValue = completedWeeks / 12;
-    return progressValue.isNaN || progressValue.isInfinite ? 0.0 : progressValue;
+    if (weeklyProgress.isEmpty) return 0.0;
+    final progressValue = completedWeeks / 12.0;
+    return progressValue.clamp(0.0, 1.0);
   }
 
   int get currentWeek {
     final now = DateTime.now();
     if (now.isBefore(startDate)) return 0;
-    if (now.isAfter(endDate)) return 11; // Changed from 12 to 11 (0-based index)
+    if (now.isAfter(endDate)) return 11;
 
     final daysDiff = now.difference(startDate).inDays;
-    return (daysDiff / 7).floor().clamp(0, 11);
+    final week = (daysDiff / 7).floor();
+    return week.clamp(0, 11);
   }
 
   double get executionScore {
@@ -108,13 +111,18 @@ class Goal {
     int totalActions = 0;
     int completedActions = 0;
 
-    for (int i = 0; i <= currentWeek && i < 12; i++) {
-      totalActions += weeklyActions[i].length;
-      completedActions += weeklyActions[i].where((action) => action.isCompleted).length;
+    final maxWeek = (currentWeek + 1).clamp(1, 12);
+
+    for (int i = 0; i < maxWeek; i++) {
+      if (i < weeklyActions.length) {
+        totalActions += weeklyActions[i].length;
+        completedActions += weeklyActions[i].where((action) => action.isCompleted).length;
+      }
     }
 
-    final score = totalActions > 0 ? (completedActions / totalActions) * 100 : 0.0;
-    return score.isNaN || score.isInfinite ? 0.0 : score;
+    if (totalActions == 0) return 0.0;
+    final score = (completedActions / totalActions) * 100;
+    return score.clamp(0.0, 100.0);
   }
 
   bool get isOnTrack => executionScore >= targetScore;
@@ -123,7 +131,7 @@ class Goal {
     final now = DateTime.now();
     if (now.isAfter(endDate)) return 0;
     final remaining = endDate.difference(now).inDays;
-    return remaining < 0 ? 0 : remaining;
+    return remaining.clamp(0, double.infinity).toInt();
   }
 
   String get categoryDisplayName {
@@ -168,36 +176,54 @@ class Goal {
 
   factory Goal.fromJson(Map<String, dynamic> json) {
     final goal = Goal(
-      id: json['id'],
-      title: json['title'],
+      id: json['id'] ?? DateTime.now().millisecondsSinceEpoch.toString(),
+      title: json['title'] ?? 'Untitled Goal',
       description: json['description'] ?? '',
-      startDate: DateTime.parse(json['startDate']),
-      endDate: DateTime.parse(json['endDate']),
-      category: GoalCategory.values[json['category'] ?? 0],
-      priority: Priority.values[json['priority'] ?? 1],
-      targetScore: json['targetScore']?.toDouble() ?? 85.0,
+      startDate: json['startDate'] != null
+          ? DateTime.parse(json['startDate'])
+          : DateTime.now(),
+      endDate: json['endDate'] != null
+          ? DateTime.parse(json['endDate'])
+          : DateTime.now().add(const Duration(days: 84)),
+      category: json['category'] != null && json['category'] < GoalCategory.values.length
+          ? GoalCategory.values[json['category']]
+          : GoalCategory.personal,
+      priority: json['priority'] != null && json['priority'] < Priority.values.length
+          ? Priority.values[json['priority']]
+          : Priority.medium,
+      targetScore: (json['targetScore'] ?? 85.0).toDouble(),
       isCompleted: json['isCompleted'] ?? false,
       completedDate: json['completedDate'] != null
           ? DateTime.parse(json['completedDate'])
           : null,
       vision: json['vision'],
-      whyReasons: List<String>.from(json['whyReasons'] ?? []),
+      whyReasons: json['whyReasons'] != null
+          ? List<String>.from(json['whyReasons'])
+          : [],
     );
 
     if (json['weeklyProgress'] != null) {
-      goal.weeklyProgress = List<bool>.from(json['weeklyProgress']);
+      final progressList = List.from(json['weeklyProgress']);
+      goal.weeklyProgress = List.generate(12, (index) =>
+      index < progressList.length ? progressList[index] == true : false);
     }
 
     if (json['weeklyActions'] != null) {
-      goal.weeklyActions = (json['weeklyActions'] as List)
-          .map((week) => (week as List)
-          .map((action) => WeeklyAction.fromJson(action))
-          .toList())
-          .toList();
+      final actionsList = List.from(json['weeklyActions']);
+      goal.weeklyActions = List.generate(12, (index) {
+        if (index < actionsList.length && actionsList[index] is List) {
+          return (actionsList[index] as List)
+              .map((action) => WeeklyAction.fromJson(Map<String, dynamic>.from(action)))
+              .toList();
+        }
+        return <WeeklyAction>[];
+      });
     }
 
     if (json['weeklyReflections'] != null) {
-      goal.weeklyReflections = List<String>.from(json['weeklyReflections']);
+      final reflectionsList = List.from(json['weeklyReflections']);
+      goal.weeklyReflections = List.generate(12, (index) =>
+      index < reflectionsList.length ? reflectionsList[index].toString() : '');
     }
 
     return goal;

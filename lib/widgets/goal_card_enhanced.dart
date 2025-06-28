@@ -71,7 +71,7 @@ class GoalCardEnhanced extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: goal.isCompleted ? Colors.grey : Colors.black87,
+                        color: goal.isCompleted ? Colors.grey : Colors.white,
                         decoration: goal.isCompleted
                             ? TextDecoration.lineThrough
                             : null,
@@ -228,7 +228,7 @@ class GoalCardEnhanced extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: daysRemaining < 14 ? Colors.red : Colors.black87,
+                            color: daysRemaining < 14 ? Colors.red : Colors.white,
                           ),
                         ),
                       ],

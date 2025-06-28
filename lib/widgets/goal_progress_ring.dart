@@ -24,7 +24,7 @@ class GoalProgressRing extends StatelessWidget {
                   width: 80,
                   height: 80,
                   child: CircularProgressIndicator(
-                    value: progress.isNaN || progress.isInfinite ? 0.0 : progress,
+                    value: progress,
                     strokeWidth: 8,
                     backgroundColor: Colors.grey[300],
                     valueColor: AlwaysStoppedAnimation<Color>(
@@ -35,14 +35,14 @@ class GoalProgressRing extends StatelessWidget {
                 Column(
                   children: [
                     Text(
-                      '${((progress.isNaN || progress.isInfinite ? 0.0 : progress) * 100).toInt()}%',
+                      '${(progress * 100).toInt()}%',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
-                      '${(executionScore.isNaN || executionScore.isInfinite ? 0.0 : executionScore).toInt()}%',
+                      '${executionScore.toInt()}%',
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey[600],

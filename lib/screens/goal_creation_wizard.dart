@@ -88,7 +88,9 @@ class _GoalCreationWizardState extends State<GoalCreationWizard> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create New Goal'),
-        elevation: 0,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Colors.white,
+        elevation: 2,
       ),
       body: Column(
         children: [
@@ -277,19 +279,21 @@ class _GoalCreationWizardState extends State<GoalCreationWizard> {
             const Text('Priority', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
             const SizedBox(height: 16),
         
-            Column(
-              children: Priority.values.map((priority) {
-                return RadioListTile<Priority>(
-                  title: Text(priority.name.toUpperCase()),
-                  subtitle: Text(_getPriorityDescription(priority)),
-                  value: priority,
-                  groupValue: _priority,
-                  onChanged: (value) {
-                    if (value != null) setState(() => _priority = value);
-                  },
-                  activeColor: const Color(0xFF667eea),
-                );
-              }).toList(),
+            SingleChildScrollView(
+              child: Column(
+                children: Priority.values.map((priority) {
+                  return RadioListTile<Priority>(
+                    title: Text(priority.name.toUpperCase()),
+                    subtitle: Text(_getPriorityDescription(priority)),
+                    value: priority,
+                    groupValue: _priority,
+                    onChanged: (value) {
+                      if (value != null) setState(() => _priority = value);
+                    },
+                    activeColor: const Color(0xFF667eea),
+                  );
+                }).toList(),
+              ),
             ),
           ],
         ),
@@ -506,7 +510,7 @@ class _GoalCreationWizardState extends State<GoalCreationWizard> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.tablet, color: Colors.green[700]),
+                      Icon(Icons.flag_circle_outlined, color: Colors.green[700]),
                       const SizedBox(width: 8),
                       Text(
                         'Execution Score Guide',

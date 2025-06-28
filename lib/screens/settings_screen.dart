@@ -1,9 +1,15 @@
-import 'package:flutter/material.dart';import '../services/storage_services.dart';
+import 'package:flutter/material.dart';
+import '../services/storage_services.dart';
 
 class SettingsScreen extends StatefulWidget {
   final Function(ThemeMode)? onThemeChanged;
+  final VoidCallback? onDataCleared;
 
-  const SettingsScreen({super.key, this.onThemeChanged});
+  const SettingsScreen({
+    super.key,
+    this.onThemeChanged,
+    this.onDataCleared,
+  });
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -56,6 +62,53 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+  Future<void> _clearAllData() async {
+    try {
+      // Clear all data
+      await StorageService.saveGoals([]);
+      await StorageService.saveSettings({
+        'notifications_enabled': true,
+        'weekly_review_day': 0,
+        'theme_mode': 'system',
+        'has_seen_splash': true, // Keep splash as seen
+      });
+
+      // Update local settings
+      setState(() {
+        settings = {
+          'notifications_enabled': true,
+          'weekly_review_day': 0,
+          'theme_mode': 'system',
+          'has_seen_splash': true,
+        };
+      });
+
+      // Notify parent about data clearing
+      if (widget.onDataCleared != null) {
+        widget.onDataCleared!();
+      }
+
+      // Reset theme to system default
+      if (widget.onThemeChanged != null) {
+        widget.onThemeChanged!(ThemeMode.system);
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('All data cleared successfully'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error clearing data: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
@@ -65,6 +118,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Settings'),
+        automaticallyImplyLeading: false,
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -157,27 +214,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildSection(String title, List<Widget> children) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-            child: Text(
-              title,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[600],
-              ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: Text(
+            title,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[600],
             ),
           ),
-          Card(
-            margin: const EdgeInsets.only(bottom: 16),
-            child: Column(children: children),
-          ),
-        ],
-      ),
+        ),
+        Card(
+          margin: const EdgeInsets.only(bottom: 16),
+          child: Column(children: children),
+        ),
+      ],
     );
   }
 
@@ -299,26 +354,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           TextButton(
             onPressed: () async {
-              // Clear all data
-              await StorageService.saveGoals([]);
-              await StorageService.saveSettings({
-                'notifications_enabled': true,
-                'weekly_review_day': 0,
-                'theme_mode': 'system',
-              });
-
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('All data cleared successfully'),
-                  backgroundColor: Colors.green,
-                ),
-              );
-
-              // Reset theme to system default
-              if (widget.onThemeChanged != null) {
-                widget.onThemeChanged!(ThemeMode.system);
-              }
+              await _clearAllData();
             },
             child: const Text('Clear Data', style: TextStyle(color: Colors.red)),
           ),

@@ -22,6 +22,19 @@ class DashboardScreen extends StatelessWidget {
     final urgentGoals = activeGoals.where((g) => g.daysRemaining < 14).toList();
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Dashboard',
+          style: TextStyle(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white70
+                : Colors.black87,
+          ),
+        ),
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
       body: RefreshIndicator(
         onRefresh: () async {
           // Refresh logic would go here
@@ -32,7 +45,7 @@ class DashboardScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header Stats
-              buildStatsOverview(activeGoals, completedGoals, averageExecution, onTrackGoals),
+              _buildStatsOverview(activeGoals, completedGoals, averageExecution, onTrackGoals),
 
               const SizedBox(height: 24),
 
@@ -64,7 +77,7 @@ class DashboardScreen extends StatelessWidget {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.red),
                 ),
                 const SizedBox(height: 16),
-                ...urgentGoals.map((goal) => buildUrgentGoalCard(goal)),
+                ...urgentGoals.map((goal) => _buildUrgentGoalCard(goal)),
                 const SizedBox(height: 24),
               ],
 
@@ -80,7 +93,7 @@ class DashboardScreen extends StatelessWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    childAspectRatio: 0.8,
+                    childAspectRatio: 0.9,
                     crossAxisSpacing: 16,
                     mainAxisSpacing: 16,
                   ),
@@ -97,12 +110,12 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget buildStatsOverview(List<Goal> activeGoals, List<Goal> completedGoals,
+  Widget _buildStatsOverview(List<Goal> activeGoals, List<Goal> completedGoals,
       double averageExecution, int onTrackGoals) {
     return Row(
       children: [
         Expanded(
-          child: buildStatCard(
+          child: _buildStatCard(
             'Active Goals',
             '${activeGoals.length}',
             Icons.flag,
@@ -111,7 +124,7 @@ class DashboardScreen extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: buildStatCard(
+          child: _buildStatCard(
             'Completed',
             '${completedGoals.length}',
             Icons.check_circle,
@@ -120,7 +133,7 @@ class DashboardScreen extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: buildStatCard(
+          child: _buildStatCard(
             'Avg Execution',
             '${averageExecution.toInt()}%',
             Icons.trending_up,
@@ -129,7 +142,7 @@ class DashboardScreen extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: buildStatCard(
+          child: _buildStatCard(
             'On Track',
             '$onTrackGoals/${activeGoals.length}',
             Icons.track_changes,
@@ -140,7 +153,7 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget buildStatCard(String title, String value, IconData icon, Color color) {
+  Widget _buildStatCard(String title, String value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -173,13 +186,13 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget buildUrgentGoalCard(Goal goal) {
+  Widget _buildUrgentGoalCard(Goal goal) {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: Colors.red.withOpacity(0.1),
-          child: Icon(Icons.warning, color: Colors.red),
+          child: const Icon(Icons.warning, color: Colors.red),
         ),
         title: Text(goal.title),
         subtitle: Text('${goal.daysRemaining} days remaining'),
