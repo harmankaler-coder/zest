@@ -97,7 +97,8 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
 
   void _updateReflection(int weekIndex, String reflection) {
     goal.weeklyReflections[weekIndex] = reflection;
-    _updateGoal();
+    // Don't call _updateGoal() immediately to avoid navigation
+    // Save will happen when user navigates away or app is paused
   }
 
   @override
@@ -656,6 +657,10 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
                         ),
                         controller: _reflectionControllers[weekIndex],
                         onChanged: (value) => _updateReflection(weekIndex, value),
+                        onEditingComplete: () {
+                          // Save when user finishes editing
+                          _updateGoal();
+                        },
                       ),
                       
                       const SizedBox(height: 16),
