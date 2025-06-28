@@ -137,8 +137,9 @@ class _TwelveWeekYearAppState extends State<TwelveWeekYearApp> {
         brightness: Brightness.dark,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
+        scaffoldBackgroundColor: const Color(0xFF121212),
         appBarTheme: AppBarTheme(
-          backgroundColor: const Color(0xFF2C3E50),
+          backgroundColor: const Color(0xFF1E1E1E),
           foregroundColor: Colors.white,
           elevation: 2,
           centerTitle: true,
@@ -163,27 +164,48 @@ class _TwelveWeekYearAppState extends State<TwelveWeekYearApp> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          color: const Color(0xFF2C2C2C),
+          color: const Color(0xFF1E1E1E),
         ),
         inputDecorationTheme: InputDecorationTheme(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFF333333)),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFF333333)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: const BorderSide(color: Color(0xFF667eea), width: 2),
           ),
+          fillColor: const Color(0xFF1E1E1E),
+          filled: true,
         ),
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           selectedItemColor: Color(0xFF667eea),
           unselectedItemColor: Colors.grey,
           backgroundColor: Color(0xFF1E1E1E),
+          type: BottomNavigationBarType.fixed,
         ),
         colorScheme: const ColorScheme.dark(
           primary: Color(0xFF667eea),
           secondary: Color(0xFF764ba2),
-          surface: Color(0xFF2C2C2C),
-          background: Color(0xFF1E1E1E),
+          surface: Color(0xFF1E1E1E),
+          background: Color(0xFF121212),
+          onSurface: Colors.white,
+          onBackground: Colors.white,
+        ),
+        dialogTheme: const DialogTheme(
+          backgroundColor: Color(0xFF1E1E1E),
+        ),
+        popupMenuTheme: const PopupMenuThemeData(
+          color: Color(0xFF1E1E1E),
+        ),
+        dropdownMenuTheme: const DropdownMenuThemeData(
+          menuStyle: MenuStyle(
+            backgroundColor: MaterialStatePropertyAll(Color(0xFF1E1E1E)),
+          ),
         ),
       ),
       home: _showSplash 

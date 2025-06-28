@@ -108,7 +108,7 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
     return Scaffold(
       appBar: AppBar(
         title: Text(goal.title),
-        backgroundColor: isDark ? const Color(0xFF2C3E50) : const Color(0xFF667eea),
+        backgroundColor: isDark ? const Color(0xFF1E1E1E) : const Color(0xFF667eea),
         foregroundColor: Colors.white,
         actions: [
           IconButton(
@@ -855,7 +855,7 @@ class _GoalEditWizardState extends State<GoalEditWizard> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Goal'),
-        backgroundColor: isDark ? const Color(0xFF2C3E50) : const Color(0xFF667eea),
+        backgroundColor: isDark ? const Color(0xFF1E1E1E) : const Color(0xFF667eea),
         foregroundColor: Colors.white,
         actions: [
           TextButton(
