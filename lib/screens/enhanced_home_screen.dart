@@ -124,28 +124,10 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
               ),
             ),
             const SizedBox(height: 32),
-            Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFF667eea),
-                    Color(0xFF764ba2),
-                  ],
-                ),
-                borderRadius: BorderRadius.all(Radius.circular(12)),
-              ),
-              child: ElevatedButton.icon(
-                onPressed: _navigateToGoalCreation,
-                icon: const Icon(Icons.add),
-                label: const Text('Create Your First Goal'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                ),
-              ),
+            ElevatedButton.icon(
+              onPressed: _navigateToGoalCreation,
+              icon: const Icon(Icons.add),
+              label: const Text('Create Your First Goal'),
             ),
           ],
         ),
@@ -218,8 +200,6 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
     final screens = [
       _buildGoalsList(),
       DashboardScreen(goals: goals),
@@ -240,24 +220,6 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('12 Week Year'),
-        elevation: 0,
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: isDark
-                  ? [
-                      const Color(0xFF2C3E50),
-                      const Color(0xFF34495E),
-                    ]
-                  : [
-                      const Color(0xFF667eea),
-                      const Color(0xFF764ba2),
-                    ],
-            ),
-          ),
-        ),
         actions: [
           if (_selectedIndex == 0)
             IconButton(

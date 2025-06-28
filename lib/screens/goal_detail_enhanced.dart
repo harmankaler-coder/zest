@@ -18,17 +18,28 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   late Goal goal;
+  final List<TextEditingController> _reflectionControllers = [];
 
   @override
   void initState() {
     super.initState();
     goal = widget.goal;
     _tabController = TabController(length: 4, vsync: this);
+    
+    // Initialize reflection controllers
+    for (int i = 0; i < 12; i++) {
+      _reflectionControllers.add(
+        TextEditingController(text: goal.weeklyReflections[i])
+      );
+    }
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    for (var controller in _reflectionControllers) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
@@ -84,6 +95,11 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
     );
   }
 
+  void _updateReflection(int weekIndex, String reflection) {
+    goal.weeklyReflections[weekIndex] = reflection;
+    _updateGoal();
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -91,23 +107,7 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
     return Scaffold(
       appBar: AppBar(
         title: Text(goal.title),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: isDark
-                  ? [
-                      const Color(0xFF2C3E50),
-                      const Color(0xFF34495E),
-                    ]
-                  : [
-                      const Color(0xFF667eea),
-                      const Color(0xFF764ba2),
-                    ],
-            ),
-          ),
-        ),
+        backgroundColor: isDark ? const Color(0xFF2C3E50) : const Color(0xFF667eea),
         foregroundColor: Colors.white,
         actions: [
           IconButton(
@@ -500,9 +500,7 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
                     ? Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-                          ),
+                          color: const Color(0xFF667eea),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: const Text(
@@ -526,11 +524,7 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
       child: Column(
         children: [
           Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-              ),
-            ),
+            color: Theme.of(context).colorScheme.primary,
             child: TabBar(
               isScrollable: true,
               labelColor: Colors.white,
@@ -558,17 +552,10 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Container(
-                            decoration: const BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-                              ),
-                              borderRadius: BorderRadius.all(Radius.circular(8)),
-                            ),
-                            child: IconButton(
-                              onPressed: () => _addWeeklyAction(weekIndex),
-                              icon: const Icon(Icons.add, color: Colors.white),
-                            ),
+                          ElevatedButton.icon(
+                            onPressed: () => _addWeeklyAction(weekIndex),
+                            icon: const Icon(Icons.add),
+                            label: const Text('Add'),
                           ),
                         ],
                       ),
@@ -635,11 +622,7 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
       child: Column(
         children: [
           Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-              ),
-            ),
+            color: Theme.of(context).colorScheme.primary,
             child: TabBar(
               isScrollable: true,
               labelColor: Colors.white,
@@ -671,13 +654,8 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
                           hintText: 'What did you learn this week?\nWhat worked well?\nWhat would you do differently?\nHow did you feel about your progress?',
                           border: OutlineInputBorder(),
                         ),
-                        controller: TextEditingController(
-                          text: goal.weeklyReflections[weekIndex],
-                        ),
-                        onChanged: (value) {
-                          goal.weeklyReflections[weekIndex] = value;
-                          _updateGoal();
-                        },
+                        controller: _reflectionControllers[weekIndex],
+                        onChanged: (value) => _updateReflection(weekIndex, value),
                       ),
                       
                       const SizedBox(height: 16),
@@ -872,23 +850,8 @@ class _GoalEditWizardState extends State<GoalEditWizard> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Goal'),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: isDark
-                  ? [
-                      const Color(0xFF2C3E50),
-                      const Color(0xFF34495E),
-                    ]
-                  : [
-                      const Color(0xFF667eea),
-                      const Color(0xFF764ba2),
-                    ],
-            ),
-          ),
-        ),
+        backgroundColor: isDark ? const Color(0xFF2C3E50) : const Color(0xFF667eea),
+        foregroundColor: Colors.white,
         actions: [
           TextButton(
             onPressed: _saveGoal,
@@ -1037,26 +1000,14 @@ class _AddActionDialogState extends State<_AddActionDialog> {
           onPressed: () => Navigator.pop(context),
           child: const Text('Cancel'),
         ),
-        Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-            ),
-            borderRadius: BorderRadius.all(Radius.circular(8)),
-          ),
-          child: ElevatedButton(
-            onPressed: () {
-              if (_controller.text.trim().isNotEmpty) {
-                widget.onAdd(_controller.text.trim());
-                Navigator.pop(context);
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.transparent,
-              shadowColor: Colors.transparent,
-            ),
-            child: const Text('Add'),
-          ),
+        ElevatedButton(
+          onPressed: () {
+            if (_controller.text.trim().isNotEmpty) {
+              widget.onAdd(_controller.text.trim());
+              Navigator.pop(context);
+            }
+          },
+          child: const Text('Add'),
         ),
       ],
     );

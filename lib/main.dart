@@ -80,18 +80,24 @@ class _TwelveWeekYearAppState extends State<TwelveWeekYearApp> {
       themeMode: _themeMode,
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
+        primaryColor: const Color(0xFF667eea),
         brightness: Brightness.light,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         textTheme: GoogleFonts.interTextTheme(),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.transparent,
+        appBarTheme: AppBarTheme(
+          backgroundColor: const Color(0xFF667eea),
           foregroundColor: Colors.white,
-          elevation: 0,
+          elevation: 2,
           centerTitle: true,
+          titleTextStyle: GoogleFonts.inter(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.transparent,
+            backgroundColor: const Color(0xFF667eea),
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -117,22 +123,34 @@ class _TwelveWeekYearAppState extends State<TwelveWeekYearApp> {
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           selectedItemColor: Color(0xFF667eea),
           unselectedItemColor: Colors.grey,
+        ),
+        colorScheme: const ColorScheme.light(
+          primary: Color(0xFF667eea),
+          secondary: Color(0xFF764ba2),
+          surface: Colors.white,
+          background: Color(0xFFF5F5F5),
         ),
       ),
       darkTheme: ThemeData(
         primarySwatch: Colors.deepPurple,
+        primaryColor: const Color(0xFF667eea),
         brightness: Brightness.dark,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.transparent,
+        appBarTheme: AppBarTheme(
+          backgroundColor: const Color(0xFF2C3E50),
           foregroundColor: Colors.white,
-          elevation: 0,
+          elevation: 2,
           centerTitle: true,
+          titleTextStyle: GoogleFonts.inter(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.transparent,
+            backgroundColor: const Color(0xFF667eea),
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -145,6 +163,7 @@ class _TwelveWeekYearAppState extends State<TwelveWeekYearApp> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
+          color: const Color(0xFF2C2C2C),
         ),
         inputDecorationTheme: InputDecorationTheme(
           border: OutlineInputBorder(
@@ -158,6 +177,13 @@ class _TwelveWeekYearAppState extends State<TwelveWeekYearApp> {
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           selectedItemColor: Color(0xFF667eea),
           unselectedItemColor: Colors.grey,
+          backgroundColor: Color(0xFF1E1E1E),
+        ),
+        colorScheme: const ColorScheme.dark(
+          primary: Color(0xFF667eea),
+          secondary: Color(0xFF764ba2),
+          surface: Color(0xFF2C2C2C),
+          background: Color(0xFF1E1E1E),
         ),
       ),
       home: _showSplash 

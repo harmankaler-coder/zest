@@ -117,37 +117,29 @@ class _WeeklyPlanningScreenState extends State<WeeklyPlanningScreen> {
     
     if (activeGoals.isEmpty) {
       return Scaffold(
-        body: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Color(0xFF667eea),
-                Color(0xFF764ba2),
-              ],
-            ),
-          ),
-          child: const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.calendar_today, size: 80, color: Colors.white),
-                SizedBox(height: 16),
-                Text(
-                  'No Active Goals',
-                  style: TextStyle(
-                    fontSize: 24, 
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+        appBar: AppBar(
+          title: const Text('Weekly Plan'),
+          automaticallyImplyLeading: false,
+        ),
+        body: const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.calendar_today, size: 80, color: Colors.grey),
+              SizedBox(height: 16),
+              Text(
+                'No Active Goals',
+                style: TextStyle(
+                  fontSize: 24, 
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey,
                 ),
-                Text(
-                  'Create a goal to start weekly planning',
-                  style: TextStyle(color: Colors.white70),
-                ),
-              ],
-            ),
+              ),
+              Text(
+                'Create a goal to start weekly planning',
+                style: TextStyle(color: Colors.grey),
+              ),
+            ],
           ),
         ),
       );
@@ -160,21 +152,18 @@ class _WeeklyPlanningScreenState extends State<WeeklyPlanningScreen> {
     }
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Weekly Plan'),
+        automaticallyImplyLeading: false,
+      ),
       body: Column(
         children: [
           // Goal Selector
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFF667eea),
-                  Color(0xFF764ba2),
-                ],
-              ),
-              borderRadius: BorderRadius.only(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(16),
                 bottomRight: Radius.circular(16),
               ),
@@ -187,23 +176,20 @@ class _WeeklyPlanningScreenState extends State<WeeklyPlanningScreen> {
                   style: TextStyle(
                     fontSize: 16, 
                     fontWeight: FontWeight.w600,
-                    color: Colors.white,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.grey.withOpacity(0.3)),
                   ),
                   child: DropdownButton<String>(
                     value: selectedGoal?.id,
                     isExpanded: true,
-                    dropdownColor: Colors.white,
-                    style: const TextStyle(color: Colors.black),
                     underline: Container(),
-                    icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
                     items: activeGoals.map((goal) {
                       return DropdownMenuItem<String>(
                         value: goal.id,
@@ -246,16 +232,11 @@ class _WeeklyPlanningScreenState extends State<WeeklyPlanningScreen> {
                     width: 60,
                     margin: const EdgeInsets.symmetric(horizontal: 4),
                     decoration: BoxDecoration(
-                      gradient: isSelected 
-                          ? const LinearGradient(
-                              colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-                            )
-                          : null,
-                      color: !isSelected 
-                          ? (isCompleted 
+                      color: isSelected 
+                          ? Theme.of(context).colorScheme.primary
+                          : (isCompleted 
                               ? Colors.green.withOpacity(0.2)
-                              : Colors.grey.withOpacity(0.1))
-                          : null,
+                              : Colors.grey.withOpacity(0.1)),
                       borderRadius: BorderRadius.circular(8),
                       border: isCurrentWeek 
                           ? Border.all(color: Colors.orange, width: 2)
@@ -268,7 +249,7 @@ class _WeeklyPlanningScreenState extends State<WeeklyPlanningScreen> {
                           'W${index + 1}',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: isSelected ? Colors.white : Colors.black87,
+                            color: isSelected ? Colors.white : null,
                           ),
                         ),
                         if (isCompleted)
@@ -302,17 +283,10 @@ class _WeeklyPlanningScreenState extends State<WeeklyPlanningScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Container(
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                        ),
-                        child: IconButton(
-                          onPressed: _addAction,
-                          icon: const Icon(Icons.add, color: Colors.white),
-                        ),
+                      ElevatedButton.icon(
+                        onPressed: _addAction,
+                        icon: const Icon(Icons.add),
+                        label: const Text('Add'),
                       ),
                     ],
                   ),
@@ -378,26 +352,17 @@ class _WeeklyPlanningScreenState extends State<WeeklyPlanningScreen> {
                   if (!selectedGoal!.weeklyProgress[selectedWeek])
                     SizedBox(
                       width: double.infinity,
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Colors.green, Colors.green],
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                      child: ElevatedButton(
+                        onPressed: selectedGoal!.weeklyActions[selectedWeek].isNotEmpty
+                            ? _markWeekComplete
+                            : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
-                        child: ElevatedButton(
-                          onPressed: selectedGoal!.weeklyActions[selectedWeek].isNotEmpty
-                              ? _markWeekComplete
-                              : null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                          ),
-                          child: const Text(
-                            'Mark Week as Complete',
-                            style: TextStyle(color: Colors.white),
-                          ),
+                        child: const Text(
+                          'Mark Week as Complete',
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
                     )
@@ -465,26 +430,14 @@ class _AddActionDialogState extends State<_AddActionDialog> {
           onPressed: () => Navigator.pop(context),
           child: const Text('Cancel'),
         ),
-        Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-            ),
-            borderRadius: BorderRadius.all(Radius.circular(8)),
-          ),
-          child: ElevatedButton(
-            onPressed: () {
-              if (_controller.text.trim().isNotEmpty) {
-                widget.onAdd(_controller.text.trim());
-                Navigator.pop(context);
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.transparent,
-              shadowColor: Colors.transparent,
-            ),
-            child: const Text('Add'),
-          ),
+        ElevatedButton(
+          onPressed: () {
+            if (_controller.text.trim().isNotEmpty) {
+              widget.onAdd(_controller.text.trim());
+              Navigator.pop(context);
+            }
+          },
+          child: const Text('Add'),
         ),
       ],
     );

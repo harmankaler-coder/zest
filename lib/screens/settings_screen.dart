@@ -118,6 +118,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Settings'),
+        automaticallyImplyLeading: false,
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
