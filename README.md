@@ -25,7 +25,7 @@ Android Studio – Primary development and debugging environment
 
 📲 Apk File 
 
-
+https://github.com/harmankaler-coder/zest/releases/download/Pubilsh/app-release-1.apk
 
 📦 Getting Started
 
