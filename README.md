@@ -1,16 +1,54 @@
-# twelve_week
+📅 Zest
 
-A new Flutter project.
+Zest is a goal-setting and execution-focused productivity app built around the principles of The 12 Week Year by Brian P. Moran and Michael Lennington. Instead of following the traditional annual planning model, Zest empowers users to redefine their year in 12-week cycles—maximizing clarity, urgency, and results.
 
-## Getting Started
+🚀 Key Features
 
-This project is a starting point for a Flutter application.
+12-Week Planning System – Define short-term, high-impact goals for 12-week cycles.
 
-A few resources to get you started if this is your first Flutter project:
+Weekly Execution – Break goals into manageable weekly plans and tasks.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Progress Visualization – Track your execution score and goal progress over time.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Daily Focus View – Prioritize the most important actions each day.
+
+Cycle Reviews – Reflect on wins and areas of improvement at the end of each cycle.
+
+
+🛠️ Tech Stack
+
+Flutter – Cross-platform UI framework for iOS & Android
+
+Dart – Core programming language
+
+Android Studio – Primary development and debugging environment
+
+
+📦 Getting Started
+
+To run Zest locally on your machine:
+
+1. Clone the repository
+
+git clone https://github.com/yourusername/zest.git
+cd zest
+
+
+2. Install dependencies
+
+flutter pub get
+
+
+3. Launch the app
+
+flutter run
+
+
+
+> Ensure that Flutter is installed and properly configured on your system.
+
+
+
+📚 About the Methodology
+
+Zest is inspired by the 12 Week Year framework, a time management and performance system that encourages shorter, focused execution cycles. This approach promotes greater accountability, urgency, and goal achievement by treating every 12 weeks as a standalone year.
