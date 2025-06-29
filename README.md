@@ -23,6 +23,9 @@ Dart – Core programming language
 
 Android Studio – Primary development and debugging environment
 
+📲 Apk File 
+
+
 
 📦 Getting Started
 
