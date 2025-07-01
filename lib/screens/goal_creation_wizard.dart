@@ -40,10 +40,12 @@ class _GoalCreationWizardState extends State<GoalCreationWizard> {
 
   void _nextPage() {
     if (_currentPage < 4) {
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
+      if (_validateCurrentPage()) {
+        _pageController.nextPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
     }
   }
 
@@ -56,11 +58,40 @@ class _GoalCreationWizardState extends State<GoalCreationWizard> {
     }
   }
 
+  bool _validateCurrentPage() {
+    switch (_currentPage) {
+      case 0: // Basic Info
+        if (_titleController.text.trim().isEmpty) {
+          _showValidationError('Please enter a goal title');
+          return false;
+        }
+        if (_startDate == null) {
+          _showValidationError('Please select a start date');
+          return false;
+        }
+        break;
+      case 3: // Why page
+        if (_whyControllers[0].text.trim().isEmpty) {
+          _showValidationError('Please provide at least one reason why this goal is important to you');
+          return false;
+        }
+        break;
+    }
+    return true;
+  }
+
+  void _showValidationError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
   void _createGoal() {
-    if (_titleController.text.trim().isEmpty || _startDate == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all required fields')),
-      );
+    if (!_validateCurrentPage()) {
       return;
     }
 
@@ -190,12 +221,16 @@ class _GoalCreationWizardState extends State<GoalCreationWizard> {
           
           TextField(
             controller: _titleController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Goal Title *',
               hintText: 'e.g., Lose 20 pounds',
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
+              errorText: _titleController.text.trim().isEmpty && _currentPage > 0 
+                  ? 'Goal title is required' 
+                  : null,
             ),
             maxLength: 100,
+            onChanged: (value) => setState(() {}),
           ),
           
           const SizedBox(height: 16),
@@ -217,6 +252,14 @@ class _GoalCreationWizardState extends State<GoalCreationWizard> {
             title: const Text('Start Date *'),
             subtitle: Text(_startDate?.toString().split(' ')[0] ?? 'Select start date'),
             trailing: const Icon(Icons.calendar_today),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+              side: BorderSide(
+                color: _startDate == null && _currentPage > 0 
+                    ? Colors.red 
+                    : Colors.grey.withOpacity(0.5),
+              ),
+            ),
             onTap: () async {
               final date = await showDatePicker(
                 context: context,
@@ -229,6 +272,15 @@ class _GoalCreationWizardState extends State<GoalCreationWizard> {
               }
             },
           ),
+          
+          if (_startDate == null && _currentPage > 0)
+            const Padding(
+              padding: EdgeInsets.only(left: 16, top: 8),
+              child: Text(
+                'Start date is required',
+                style: TextStyle(color: Colors.red, fontSize: 12),
+              ),
+            ),
         ],
       ),
     );
@@ -389,8 +441,12 @@ class _GoalCreationWizardState extends State<GoalCreationWizard> {
                   labelText: 'Reason ${index + 1} ${index == 0 ? "(Required)" : "(Optional)"}',
                   hintText: 'Why is this goal important to you?',
                   border: const OutlineInputBorder(),
+                  errorText: index == 0 && _whyControllers[0].text.trim().isEmpty && _currentPage > 3
+                      ? 'At least one reason is required'
+                      : null,
                 ),
                 maxLength: 200,
+                onChanged: (value) => setState(() {}),
               ),
             );
           }),

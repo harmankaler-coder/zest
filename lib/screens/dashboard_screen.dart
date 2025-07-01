@@ -27,13 +27,16 @@ class DashboardScreen extends StatelessWidget {
           'Dashboard',
           style: TextStyle(
             color: Theme.of(context).brightness == Brightness.dark 
-                ? Colors.white70 
-                : Colors.black87,
+                ? Colors.white 
+                : Colors.white,
+            fontWeight: FontWeight.w600,
           ),
         ),
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+        backgroundColor: Theme.of(context).brightness == Brightness.dark 
+            ? const Color(0xFF1E1E1E) 
+            : const Color(0xFF667eea),
+        elevation: 2,
       ),
       body: RefreshIndicator(
         onRefresh: () async {

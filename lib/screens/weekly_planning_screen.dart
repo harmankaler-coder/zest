@@ -103,12 +103,114 @@ class _WeeklyPlanningScreenState extends State<WeeklyPlanningScreen> {
     });
     widget.onGoalUpdated(selectedGoal!);
     
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Week ${selectedWeek + 1} marked as complete!'),
-        backgroundColor: Colors.green,
+    // Show week completion congratulations
+    _showWeekCompletionCongratulations();
+  }
+
+  void _showWeekCompletionCongratulations() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).brightness == Brightness.dark 
+            ? const Color(0xFF1E1E1E) 
+            : Colors.white,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 60,
+              height: 60,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFF667eea), Color(0xFF764ba2)],
+                ),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.check_circle,
+                size: 30,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              '🎉 Week Completed! 🎉',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Congratulations on completing Week ${selectedWeek + 1}!',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[600],
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF667eea).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    'Week ${selectedWeek + 1} Score: ${_calculateWeekScore()}%',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Keep up the excellent work!',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          Container(
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF667eea), Color(0xFF764ba2)],
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+            ),
+            child: ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+              ),
+              child: const Text(
+                'Continue',
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+        ],
       ),
     );
+  }
+
+  int _calculateWeekScore() {
+    if (selectedGoal == null) return 0;
+    final weekActions = selectedGoal!.weeklyActions[selectedWeek];
+    if (weekActions.isEmpty) return 0;
+    final completedActions = weekActions.where((a) => a.isCompleted).length;
+    return ((completedActions / weekActions.length) * 100).round();
   }
 
   @override
@@ -121,25 +223,30 @@ class _WeeklyPlanningScreenState extends State<WeeklyPlanningScreen> {
           title: const Text('Weekly Plan'),
           automaticallyImplyLeading: false,
         ),
-        body: const Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.calendar_today, size: 80, color: Colors.grey),
-              SizedBox(height: 16),
-              Text(
-                'No Active Goals',
-                style: TextStyle(
-                  fontSize: 24, 
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey,
+        body: Container(
+          color: Theme.of(context).brightness == Brightness.dark 
+              ? const Color(0xFF121212) 
+              : Colors.white,
+          child: const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.calendar_today, size: 80, color: Colors.grey),
+                SizedBox(height: 16),
+                Text(
+                  'No Active Goals',
+                  style: TextStyle(
+                    fontSize: 24, 
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey,
+                  ),
                 ),
-              ),
-              Text(
-                'Create a goal to start weekly planning',
-                style: TextStyle(color: Colors.grey),
-              ),
-            ],
+                Text(
+                  'Create a goal to start weekly planning',
+                  style: TextStyle(color: Colors.grey),
+                ),
+              ],
+            ),
           ),
         ),
       );

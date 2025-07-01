@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/goal_data.dart';
 import '../widgets/goal_progress_chart.dart';
-import '../widgets/weekly_action_tile.dart';
 import 'goal_creation_wizard.dart';
 
 class GoalDetailEnhanced extends StatefulWidget {
@@ -24,7 +23,7 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
   void initState() {
     super.initState();
     goal = widget.goal;
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 3, vsync: this); // Changed from 4 to 3
     
     // Initialize reflection controllers
     for (int i = 0; i < 12; i++) {
@@ -56,7 +55,134 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
       goal.isCompleted = !goal.isCompleted;
       goal.completedDate = goal.isCompleted ? DateTime.now() : null;
     });
+    
+    // Show congratulations if goal is completed
+    if (goal.isCompleted) {
+      _showGoalCompletionCongratulations();
+    }
+    
     _updateGoal();
+  }
+
+  void _showGoalCompletionCongratulations() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).brightness == Brightness.dark 
+            ? const Color(0xFF1E1E1E) 
+            : Colors.white,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.green, Colors.lightGreen],
+                ),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.celebration,
+                size: 40,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              '🎉 Congratulations! 🎉',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'You have successfully completed your goal:',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[600],
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '"${goal.title}"',
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                fontStyle: FontStyle.italic,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.green.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    'Final Execution Score: ${goal.executionScore.toInt()}%',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Weeks Completed: ${goal.completedWeeks}/12',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'You\'ve proven that focused execution over 12 weeks can achieve remarkable results. Keep up the momentum!',
+              style: TextStyle(fontSize: 14),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+        actions: [
+          Container(
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.green, Colors.lightGreen],
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+            child: ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+              child: const Text(
+                'Thank You!',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   void _editGoal() async {
@@ -74,31 +200,10 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
     }
   }
 
-  void _addWeeklyAction(int weekIndex) {
-    showDialog(
-      context: context,
-      builder: (context) => _AddActionDialog(
-        weekNumber: weekIndex + 1,
-        onAdd: (description) {
-          final action = WeeklyAction(
-            id: DateTime.now().millisecondsSinceEpoch.toString(),
-            description: description,
-          );
-          
-          setState(() {
-            goal.weeklyActions[weekIndex].add(action);
-          });
-          
-          _updateGoal();
-        },
-      ),
-    );
-  }
-
   void _updateReflection(int weekIndex, String reflection) {
     goal.weeklyReflections[weekIndex] = reflection;
-    // Don't call _updateGoal() immediately to avoid navigation
-    // Save will happen when user navigates away or app is paused
+    // Save immediately when reflection is updated
+    _updateGoal();
   }
 
   @override
@@ -156,7 +261,6 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
           tabs: const [
             Tab(text: 'Overview'),
             Tab(text: 'Progress'),
-            Tab(text: 'Actions'),
             Tab(text: 'Reflection'),
           ],
         ),
@@ -166,7 +270,6 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
         children: [
           _buildOverviewTab(),
           _buildProgressTab(),
-          _buildActionsTab(),
           _buildReflectionTab(),
         ],
       ),
@@ -518,104 +621,6 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
     );
   }
 
-  Widget _buildActionsTab() {
-    return DefaultTabController(
-      length: 12,
-      initialIndex: goal.currentWeek,
-      child: Column(
-        children: [
-          Container(
-            color: Theme.of(context).colorScheme.primary,
-            child: TabBar(
-              isScrollable: true,
-              labelColor: Colors.white,
-              unselectedLabelColor: Colors.white70,
-              indicatorColor: Colors.white,
-              tabs: List.generate(12, (index) => Tab(text: 'W${index + 1}')),
-            ),
-          ),
-          Expanded(
-            child: TabBarView(
-              children: List.generate(12, (weekIndex) {
-                final actions = goal.weeklyActions[weekIndex];
-                return SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Week ${weekIndex + 1} Actions',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          ElevatedButton.icon(
-                            onPressed: () => _addWeeklyAction(weekIndex),
-                            icon: const Icon(Icons.add),
-                            label: const Text('Add'),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      
-                      if (actions.isEmpty)
-                        Container(
-                          padding: const EdgeInsets.all(32),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Center(
-                            child: Column(
-                              children: [
-                                Icon(Icons.add_task, size: 48, color: Colors.grey),
-                                SizedBox(height: 8),
-                                Text(
-                                  'No actions planned for this week',
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                                Text(
-                                  'Tap + to add your first action',
-                                  style: TextStyle(color: Colors.grey, fontSize: 12),
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      else
-                        ...actions.map((action) {
-                          return WeeklyActionTile(
-                            action: action,
-                            onToggle: () {
-                              setState(() {
-                                action.isCompleted = !action.isCompleted;
-                                action.completedDate = action.isCompleted ? DateTime.now() : null;
-                              });
-                              _updateGoal();
-                            },
-                            onDelete: () {
-                              setState(() {
-                                goal.weeklyActions[weekIndex].remove(action);
-                              });
-                              _updateGoal();
-                            },
-                          );
-                        }),
-                    ],
-                  ),
-                );
-              }),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildReflectionTab() {
     return DefaultTabController(
       length: 12,
@@ -657,10 +662,6 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
                         ),
                         controller: _reflectionControllers[weekIndex],
                         onChanged: (value) => _updateReflection(weekIndex, value),
-                        onEditingComplete: () {
-                          // Save when user finishes editing
-                          _updateGoal();
-                        },
                       ),
                       
                       const SizedBox(height: 16),
@@ -970,51 +971,6 @@ class _GoalEditWizardState extends State<GoalEditWizard> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _AddActionDialog extends StatefulWidget {
-  final Function(String) onAdd;
-  final int weekNumber;
-
-  const _AddActionDialog({required this.onAdd, required this.weekNumber});
-
-  @override
-  State<_AddActionDialog> createState() => _AddActionDialogState();
-}
-
-class _AddActionDialogState extends State<_AddActionDialog> {
-  final _controller = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text('Add Week ${widget.weekNumber} Action'),
-      content: TextField(
-        controller: _controller,
-        decoration: const InputDecoration(
-          hintText: 'What specific action will you take this week?',
-          border: OutlineInputBorder(),
-        ),
-        maxLines: 2,
-        autofocus: true,
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            if (_controller.text.trim().isNotEmpty) {
-              widget.onAdd(_controller.text.trim());
-              Navigator.pop(context);
-            }
-          },
-          child: const Text('Add'),
-        ),
-      ],
     );
   }
 }
