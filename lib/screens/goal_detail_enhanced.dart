@@ -233,14 +233,15 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
                       ? [const Color(0xFFFFB74D), const Color(0xFFFF9800)]
                       : [const Color(0xFF4ECDC4), const Color(0xFF44A08D)],
                 ),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(10),
               ),
               child: IconButton(
-                icon: Icon(goal.isCompleted ? Icons.undo_rounded : Icons.check_rounded),
+                icon: Icon(goal.isCompleted ? Icons.undo_rounded : Icons.check_rounded, size: 18),
                 onPressed: _toggleGoalCompletion,
                 tooltip: goal.isCompleted ? 'Mark as Incomplete' : 'Mark as Complete',
                 style: IconButton.styleFrom(
                   backgroundColor: Colors.transparent,
+                  padding: const EdgeInsets.all(8),
                 ),
               ),
             ),
@@ -1094,9 +1095,12 @@ class _GoalEditWizardState extends State<GoalEditWizard> {
             ),
             child: TextButton(
               onPressed: _saveGoal,
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              ),
               child: const Text(
                 'Save',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
               ),
             ),
           ),

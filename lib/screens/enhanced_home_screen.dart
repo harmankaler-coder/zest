@@ -156,7 +156,7 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
                   gradient: const LinearGradient(
                     colors: [Color(0xFF6C63FF), Color(0xFF9C88FF)],
                   ),
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
                       color: const Color(0xFF6C63FF).withOpacity(0.3),
@@ -167,12 +167,13 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
                 ),
                 child: ElevatedButton.icon(
                   onPressed: _navigateToGoalCreation,
-                  icon: const Icon(Icons.add, size: 24),
+                  icon: const Icon(Icons.add, size: 20),
                   label: const Text('Create Your First Goal'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
@@ -310,14 +311,15 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
                 gradient: const LinearGradient(
                   colors: [Color(0xFF6C63FF), Color(0xFF9C88FF)],
                 ),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(10),
               ),
               child: IconButton(
-                icon: const Icon(Icons.add, size: 24),
+                icon: const Icon(Icons.add, size: 20),
                 onPressed: _navigateToGoalCreation,
                 tooltip: 'Add New Goal',
                 style: IconButton.styleFrom(
                   backgroundColor: Colors.transparent,
+                  padding: const EdgeInsets.all(8),
                 ),
               ),
             ),

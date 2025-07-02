@@ -193,7 +193,7 @@ class _SplashScreenState extends State<SplashScreen>
                 
                 const Spacer(flex: 2),
                 
-                // Get Started Button with enhanced design
+                // Get Started Button with enhanced design - Made smaller
                 SlideTransition(
                   position: _slideAnimation,
                   child: FadeTransition(
@@ -202,12 +202,12 @@ class _SplashScreenState extends State<SplashScreen>
                       children: [
                         Container(
                           width: double.infinity,
-                          height: 64,
+                          height: 52, // Reduced from 64
                           decoration: BoxDecoration(
                             gradient: const LinearGradient(
                               colors: [Color(0xFF6C63FF), Color(0xFF9C88FF)],
                             ),
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(16), // Reduced from 20
                             boxShadow: [
                               BoxShadow(
                                 color: const Color(0xFF6C63FF).withOpacity(0.4),
@@ -222,13 +222,13 @@ class _SplashScreenState extends State<SplashScreen>
                               backgroundColor: Colors.transparent,
                               shadowColor: Colors.transparent,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(16), // Reduced from 20
                               ),
                             ),
                             child: Text(
                               'Get Started',
                               style: GoogleFonts.inter(
-                                fontSize: 20,
+                                fontSize: 18, // Reduced from 20
                                 fontWeight: FontWeight.w700,
                                 letterSpacing: 0.5,
                                 color: Colors.white,
