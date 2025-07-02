@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import '../services/storage_service.dart';
 
 class SettingsScreen extends StatefulWidget {
-  final Function(ThemeMode)? onThemeChanged;
   final VoidCallback? onDataCleared;
 
   const SettingsScreen({
     super.key, 
-    this.onThemeChanged,
     this.onDataCleared,
   });
 
@@ -42,24 +40,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       settings[key] = value;
     });
     _saveSettings();
-    
-    // Handle theme changes
-    if (key == 'theme_mode' && widget.onThemeChanged != null) {
-      ThemeMode themeMode;
-      switch (value) {
-        case 'light':
-          themeMode = ThemeMode.light;
-          break;
-        case 'dark':
-          themeMode = ThemeMode.dark;
-          break;
-        case 'system':
-        default:
-          themeMode = ThemeMode.system;
-          break;
-      }
-      widget.onThemeChanged!(themeMode);
-    }
   }
 
   Future<void> _clearAllData() async {
@@ -69,7 +49,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       await StorageService.saveSettings({
         'notifications_enabled': true,
         'weekly_review_day': 0,
-        'theme_mode': 'system',
         'has_seen_splash': true, // Keep splash as seen
       });
       
@@ -78,7 +57,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         settings = {
           'notifications_enabled': true,
           'weekly_review_day': 0,
-          'theme_mode': 'system',
           'has_seen_splash': true,
         };
       });
@@ -88,22 +66,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
         widget.onDataCleared!();
       }
       
-      // Reset theme to system default
-      if (widget.onThemeChanged != null) {
-        widget.onThemeChanged!(ThemeMode.system);
-      }
-      
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('All data cleared successfully'),
-          backgroundColor: Colors.green,
+        SnackBar(
+          content: const Text('All data cleared successfully'),
+          backgroundColor: const Color(0xFF4ECDC4),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error clearing data: $e'),
-          backgroundColor: Colors.red,
+          backgroundColor: const Color(0xFFFF6B6B),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
         ),
       );
     }
@@ -113,7 +94,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     if (isLoading) {
       return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+        body: Center(
+          child: CircularProgressIndicator(
+            color: Color(0xFF6C63FF),
+          ),
+        ),
       );
     }
 
@@ -122,93 +107,145 @@ class _SettingsScreenState extends State<SettingsScreen> {
         title: const Text('Settings'),
         automaticallyImplyLeading: false,
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          // App Info Section
-          _buildSection(
-            'About',
-            [
-              ListTile(
-                leading: const Icon(Icons.info),
-                title: const Text('12 Week Year'),
-                subtitle: const Text('Version 1.0.0'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => _showAboutDialog(),
-              ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF000000),
+              Color(0xFF111111),
             ],
           ),
-          
-          // Notifications Section
-          _buildSection(
-            'Notifications',
-            [
-              SwitchListTile(
-                secondary: const Icon(Icons.notifications),
-                title: const Text('Enable Notifications'),
-                subtitle: const Text('Get reminders for weekly reviews and actions'),
-                value: settings['notifications_enabled'] ?? true,
-                onChanged: (value) => _updateSetting('notifications_enabled', value),
-              ),
-              ListTile(
-                leading: const Icon(Icons.schedule),
-                title: const Text('Weekly Review Day'),
-                subtitle: Text(_getWeekdayName(settings['weekly_review_day'] ?? 0)),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => _showWeekdayPicker(),
-              ),
-            ],
-          ),
-          
-          // Appearance Section
-          _buildSection(
-            'Appearance',
-            [
-              ListTile(
-                leading: const Icon(Icons.palette),
-                title: const Text('Theme'),
-                subtitle: Text(_getThemeName(settings['theme_mode'] ?? 'system')),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => _showThemePicker(),
-              ),
-            ],
-          ),
-          
-          // Help Section
-          _buildSection(
-            'Help & Support',
-            [
-              ListTile(
-                leading: const Icon(Icons.help),
-                title: const Text('How to Use'),
-                subtitle: const Text('Learn about the 12 Week Year methodology'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => _showHelpDialog(),
-              ),
-              ListTile(
-                leading: const Icon(Icons.feedback),
-                title: const Text('Send Feedback'),
-                subtitle: const Text('Help us improve the app'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => _sendFeedback(),
-              ),
-            ],
-          ),
-          
-          // Data Management Section
-          _buildSection(
-            'Data Management',
-            [
-              ListTile(
-                leading: const Icon(Icons.delete_forever, color: Colors.red),
-                title: const Text('Clear All Data', style: TextStyle(color: Colors.red)),
-                subtitle: const Text('Delete all goals and settings'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => _showClearDataDialog(),
-              ),
-            ],
-          ),
-        ],
+        ),
+        child: ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
+            // App Info Section
+            _buildSection(
+              'About',
+              [
+                _buildListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF6C63FF), Color(0xFF9C88FF)],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(Icons.info_rounded, color: Colors.white),
+                  ),
+                  title: '12 Week Year',
+                  subtitle: 'Version 1.0.0',
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () => _showAboutDialog(),
+                ),
+              ],
+            ),
+            
+            // Notifications Section
+            _buildSection(
+              'Notifications',
+              [
+                _buildSwitchTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF4ECDC4), Color(0xFF44A08D)],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(Icons.notifications_rounded, color: Colors.white),
+                  ),
+                  title: 'Enable Notifications',
+                  subtitle: 'Get reminders for weekly reviews and actions',
+                  value: settings['notifications_enabled'] ?? true,
+                  onChanged: (value) => _updateSetting('notifications_enabled', value),
+                ),
+                _buildListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF9C88FF), Color(0xFF6C63FF)],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(Icons.schedule_rounded, color: Colors.white),
+                  ),
+                  title: 'Weekly Review Day',
+                  subtitle: _getWeekdayName(settings['weekly_review_day'] ?? 0),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () => _showWeekdayPicker(),
+                ),
+              ],
+            ),
+            
+            // Help Section
+            _buildSection(
+              'Help & Support',
+              [
+                _buildListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFFFB74D), Color(0xFFFF9800)],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(Icons.help_rounded, color: Colors.white),
+                  ),
+                  title: 'How to Use',
+                  subtitle: 'Learn about the 12 Week Year methodology',
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () => _showHelpDialog(),
+                ),
+                _buildListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF81C784), Color(0xFF4CAF50)],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(Icons.feedback_rounded, color: Colors.white),
+                  ),
+                  title: 'Send Feedback',
+                  subtitle: 'Help us improve the app',
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () => _sendFeedback(),
+                ),
+              ],
+            ),
+            
+            // Data Management Section
+            _buildSection(
+              'Data Management',
+              [
+                _buildListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFFF6B6B), Color(0xFFFF5252)],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(Icons.delete_forever_rounded, color: Colors.white),
+                  ),
+                  title: 'Clear All Data',
+                  subtitle: 'Delete all goals and settings',
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () => _showClearDataDialog(),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -218,21 +255,77 @@ class _SettingsScreenState extends State<SettingsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
           child: Text(
             title,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[600],
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: const Color(0xFF6C63FF),
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),
-        Card(
-          margin: const EdgeInsets.only(bottom: 16),
+        Container(
+          margin: const EdgeInsets.only(bottom: 24),
+          decoration: BoxDecoration(
+            color: const Color(0xFF111111),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.3),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
           child: Column(children: children),
         ),
       ],
+    );
+  }
+
+  Widget _buildListTile({
+    required Widget leading,
+    required String title,
+    required String subtitle,
+    Widget? trailing,
+    VoidCallback? onTap,
+  }) {
+    return ListTile(
+      leading: leading,
+      title: Text(
+        title,
+        style: Theme.of(context).textTheme.titleMedium,
+      ),
+      subtitle: Text(
+        subtitle,
+        style: Theme.of(context).textTheme.bodySmall,
+      ),
+      trailing: trailing,
+      onTap: onTap,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+    );
+  }
+
+  Widget _buildSwitchTile({
+    required Widget leading,
+    required String title,
+    required String subtitle,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+  }) {
+    return SwitchListTile(
+      secondary: leading,
+      title: Text(
+        title,
+        style: Theme.of(context).textTheme.titleMedium,
+      ),
+      subtitle: Text(
+        subtitle,
+        style: Theme.of(context).textTheme.bodySmall,
+      ),
+      value: value,
+      onChanged: onChanged,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
     );
   }
 
@@ -244,24 +337,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return weekdays[day];
   }
 
-  String _getThemeName(String theme) {
-    switch (theme) {
-      case 'light':
-        return 'Light';
-      case 'dark':
-        return 'Dark';
-      case 'system':
-      default:
-        return 'System Default';
-    }
-  }
-
   void _showAboutDialog() {
     showAboutDialog(
       context: context,
       applicationName: '12 Week Year',
       applicationVersion: '1.0.0',
-      applicationIcon: const Icon(Icons.flag, size: 48),
+      applicationIcon: Container(
+        width: 64,
+        height: 64,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF6C63FF), Color(0xFF9C88FF)],
+          ),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: const Icon(Icons.flag_rounded, size: 32, color: Colors.white),
+      ),
       children: [
         const Text(
           'A comprehensive goal tracking app based on the 12 Week Year methodology. '
@@ -294,50 +385,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  void _showThemePicker() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Choose Theme'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            RadioListTile<String>(
-              title: const Text('Light'),
-              subtitle: const Text('Always use light theme'),
-              value: 'light',
-              groupValue: settings['theme_mode'] ?? 'system',
-              onChanged: (value) {
-                _updateSetting('theme_mode', value);
-                Navigator.pop(context);
-              },
-            ),
-            RadioListTile<String>(
-              title: const Text('Dark'),
-              subtitle: const Text('Always use dark theme'),
-              value: 'dark',
-              groupValue: settings['theme_mode'] ?? 'system',
-              onChanged: (value) {
-                _updateSetting('theme_mode', value);
-                Navigator.pop(context);
-              },
-            ),
-            RadioListTile<String>(
-              title: const Text('System Default'),
-              subtitle: const Text('Follow system theme'),
-              value: 'system',
-              groupValue: settings['theme_mode'] ?? 'system',
-              onChanged: (value) {
-                _updateSetting('theme_mode', value);
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   void _showClearDataDialog() {
     showDialog(
       context: context,
@@ -352,12 +399,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onPressed: () => Navigator.pop(context),
             child: const Text('Cancel'),
           ),
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              await _clearAllData();
-            },
-            child: const Text('Clear Data', style: TextStyle(color: Colors.red)),
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFFFF6B6B), Color(0xFFFF5252)],
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+            child: ElevatedButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                await _clearAllData();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+              ),
+              child: const Text('Clear Data', style: TextStyle(color: Colors.white)),
+            ),
           ),
         ],
       ),
@@ -396,9 +455,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Got it'),
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF6C63FF), Color(0xFF9C88FF)],
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+            child: ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+              ),
+              child: const Text('Got it', style: TextStyle(color: Colors.white)),
+            ),
           ),
         ],
       ),
@@ -407,9 +478,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   void _sendFeedback() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Feedback feature coming soon!'),
-        backgroundColor: Colors.green,
+      SnackBar(
+        content: const Text('Feedback feature coming soon!'),
+        backgroundColor: const Color(0xFF4ECDC4),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
       ),
     );
   }

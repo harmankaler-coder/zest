@@ -9,9 +9,7 @@ import 'weekly_planning_screen.dart';
 import 'settings_screen.dart';
 
 class EnhancedHomeScreen extends StatefulWidget {
-  final Function(ThemeMode)? onThemeChanged;
-
-  const EnhancedHomeScreen({super.key, this.onThemeChanged});
+  const EnhancedHomeScreen({super.key});
 
   @override
   State<EnhancedHomeScreen> createState() => _EnhancedHomeScreenState();
@@ -92,44 +90,94 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
 
   Widget _buildGoalsList() {
     if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+        child: CircularProgressIndicator(
+          color: Color(0xFF6C63FF),
+        ),
+      );
     }
 
     if (goals.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.flag_outlined,
-              size: 80,
-              color: Colors.grey[400],
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'No 12-Week Goals Yet',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[600],
+      return Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF000000),
+              Color(0xFF111111),
+            ],
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF6C63FF), Color(0xFF9C88FF)],
+                  ),
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF6C63FF).withOpacity(0.3),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.flag_outlined,
+                  size: 60,
+                  color: Colors.white,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Create your first goal to start your\n12-week transformation journey',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[500],
+              const SizedBox(height: 32),
+              Text(
+                'No 12-Week Goals Yet',
+                style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                  color: Colors.white,
+                ),
               ),
-            ),
-            const SizedBox(height: 32),
-            ElevatedButton.icon(
-              onPressed: _navigateToGoalCreation,
-              icon: const Icon(Icons.add),
-              label: const Text('Create Your First Goal'),
-            ),
-          ],
+              const SizedBox(height: 16),
+              Text(
+                'Create your first goal to start your\n12-week transformation journey',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: Colors.white70,
+                ),
+              ),
+              const SizedBox(height: 48),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF6C63FF), Color(0xFF9C88FF)],
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF6C63FF).withOpacity(0.3),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                child: ElevatedButton.icon(
+                  onPressed: _navigateToGoalCreation,
+                  icon: const Icon(Icons.add, size: 24),
+                  label: const Text('Create Your First Goal'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }
@@ -151,49 +199,78 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
 
     return RefreshIndicator(
       onRefresh: _loadGoals,
-      child: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: sortedGoals.length,
-        itemBuilder: (context, index) {
-          final goal = sortedGoals[index];
-          return Dismissible(
-            key: Key(goal.id),
-            direction: DismissDirection.endToStart,
-            background: Container(
-              alignment: Alignment.centerRight,
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              decoration: BoxDecoration(
-                color: Colors.red,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: const Icon(Icons.delete, color: Colors.white, size: 32),
-            ),
-            confirmDismiss: (direction) async {
-              return await showDialog<bool>(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text('Delete Goal'),
-                  content: Text('Are you sure you want to delete "${goal.title}"?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(false),
-                      child: const Text('Cancel'),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(true),
-                      child: const Text('Delete', style: TextStyle(color: Colors.red)),
-                    ),
-                  ],
+      color: const Color(0xFF6C63FF),
+      backgroundColor: const Color(0xFF111111),
+      child: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF000000),
+              Color(0xFF111111),
+            ],
+          ),
+        ),
+        child: ListView.builder(
+          padding: const EdgeInsets.all(20),
+          itemCount: sortedGoals.length,
+          itemBuilder: (context, index) {
+            final goal = sortedGoals[index];
+            return Dismissible(
+              key: Key(goal.id),
+              direction: DismissDirection.endToStart,
+              background: Container(
+                alignment: Alignment.centerRight,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFFF6B6B), Color(0xFFFF5252)],
+                  ),
+                  borderRadius: BorderRadius.circular(20),
                 ),
-              );
-            },
-            onDismissed: (direction) => _deleteGoal(goal),
-            child: GoalCardEnhanced(
-              goal: goal,
-              onTap: () => _navigateToGoalDetail(goal),
-            ),
-          );
-        },
+                child: const Icon(Icons.delete, color: Colors.white, size: 32),
+              ),
+              confirmDismiss: (direction) async {
+                return await showDialog<bool>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Delete Goal'),
+                    content: Text('Are you sure you want to delete "${goal.title}"?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: const Text('Cancel'),
+                      ),
+                      Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Color(0xFFFF6B6B), Color(0xFFFF5252)],
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                        ),
+                        child: ElevatedButton(
+                          onPressed: () => Navigator.of(context).pop(true),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                          ),
+                          child: const Text('Delete', style: TextStyle(color: Colors.white)),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              onDismissed: (direction) => _deleteGoal(goal),
+              child: GoalCardEnhanced(
+                goal: goal,
+                onTap: () => _navigateToGoalDetail(goal),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -208,7 +285,6 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
         onGoalUpdated: _updateGoal,
       ),
       SettingsScreen(
-        onThemeChanged: widget.onThemeChanged,
         onDataCleared: () {
           setState(() {
             goals.clear();
@@ -219,13 +295,31 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('12 Week Year'),
+        title: Text(
+          '12 Week Year',
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+            fontWeight: FontWeight.w700,
+            letterSpacing: -0.5,
+          ),
+        ),
         actions: [
           if (_selectedIndex == 0)
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: _navigateToGoalCreation,
-              tooltip: 'Add New Goal',
+            Container(
+              margin: const EdgeInsets.only(right: 16),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF6C63FF), Color(0xFF9C88FF)],
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.add, size: 24),
+                onPressed: _navigateToGoalCreation,
+                tooltip: 'Add New Goal',
+                style: IconButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                ),
+              ),
             ),
         ],
       ),
@@ -233,28 +327,39 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
         index: _selectedIndex,
         children: screens,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: _selectedIndex,
-        onTap: (index) => setState(() => _selectedIndex = index),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.flag),
-            label: 'Goals',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
-            label: 'Dashboard',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: 'Weekly Plan',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              blurRadius: 20,
+              offset: const Offset(0, -5),
+            ),
+          ],
+        ),
+        child: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          currentIndex: _selectedIndex,
+          onTap: (index) => setState(() => _selectedIndex = index),
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.flag_rounded),
+              label: 'Goals',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.dashboard_rounded),
+              label: 'Dashboard',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.calendar_today_rounded),
+              label: 'Weekly Plan',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings_rounded),
+              label: 'Settings',
+            ),
+          ],
+        ),
       ),
     );
   }

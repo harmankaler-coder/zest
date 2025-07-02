@@ -74,87 +74,84 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        backgroundColor: Theme.of(context).brightness == Brightness.dark 
-            ? const Color(0xFF1E1E1E) 
-            : Colors.white,
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 80,
-              height: 80,
+              width: 100,
+              height: 100,
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.green, Colors.lightGreen],
+                  colors: [Color(0xFF4ECDC4), Color(0xFF44A08D)],
                 ),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
-                Icons.celebration,
-                size: 40,
+                Icons.celebration_rounded,
+                size: 50,
                 color: Colors.white,
               ),
             ),
-            const SizedBox(height: 20),
-            const Text(
+            const SizedBox(height: 24),
+            Text(
               '🎉 Congratulations! 🎉',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'You have successfully completed your goal:',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.white70,
               ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
             Text(
-              'You have successfully completed your goal:',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            Text(
               '"${goal.title}"',
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontStyle: FontStyle.italic,
+                color: const Color(0xFF6C63FF),
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
+                gradient: LinearGradient(
+                  colors: [
+                    const Color(0xFF4ECDC4).withOpacity(0.1),
+                    const Color(0xFF44A08D).withOpacity(0.1),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
                 children: [
                   Text(
                     'Final Execution Score: ${goal.executionScore.toInt()}%',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFF4ECDC4),
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Weeks Completed: ${goal.completedWeeks}/12',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Colors.white70,
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 16),
-            const Text(
+            const SizedBox(height: 20),
+            Text(
               'You\'ve proven that focused execution over 12 weeks can achieve remarkable results. Keep up the momentum!',
-              style: TextStyle(fontSize: 14),
+              style: Theme.of(context).textTheme.bodyMedium,
               textAlign: TextAlign.center,
             ),
           ],
@@ -164,16 +161,16 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
             width: double.infinity,
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Colors.green, Colors.lightGreen],
+                colors: [Color(0xFF4ECDC4), Color(0xFF44A08D)],
               ),
-              borderRadius: BorderRadius.all(Radius.circular(12)),
+              borderRadius: BorderRadius.all(Radius.circular(16)),
             ),
             child: ElevatedButton(
               onPressed: () => Navigator.pop(context),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.transparent,
                 shadowColor: Colors.transparent,
-                padding: const EdgeInsets.symmetric(vertical: 12),
+                padding: const EdgeInsets.symmetric(vertical: 16),
               ),
               child: const Text(
                 'Thank You!',
@@ -218,8 +215,6 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
     return WillPopScope(
       onWillPop: () async {
         // Save all reflections when user tries to leave the screen
@@ -229,13 +224,25 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
       child: Scaffold(
         appBar: AppBar(
           title: Text(goal.title),
-          backgroundColor: isDark ? const Color(0xFF1E1E1E) : const Color(0xFF667eea),
-          foregroundColor: Colors.white,
           actions: [
-            IconButton(
-              icon: Icon(goal.isCompleted ? Icons.undo : Icons.check),
-              onPressed: _toggleGoalCompletion,
-              tooltip: goal.isCompleted ? 'Mark as Incomplete' : 'Mark as Complete',
+            Container(
+              margin: const EdgeInsets.only(right: 8),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: goal.isCompleted 
+                      ? [const Color(0xFFFFB74D), const Color(0xFFFF9800)]
+                      : [const Color(0xFF4ECDC4), const Color(0xFF44A08D)],
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: IconButton(
+                icon: Icon(goal.isCompleted ? Icons.undo_rounded : Icons.check_rounded),
+                onPressed: _toggleGoalCompletion,
+                tooltip: goal.isCompleted ? 'Mark as Incomplete' : 'Mark as Complete',
+                style: IconButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                ),
+              ),
             ),
             PopupMenuButton(
               itemBuilder: (context) => [
@@ -243,7 +250,7 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
                   value: 'edit',
                   child: Row(
                     children: [
-                      Icon(Icons.edit),
+                      Icon(Icons.edit_rounded),
                       SizedBox(width: 8),
                       Text('Edit Goal'),
                     ],
@@ -253,9 +260,9 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
                   value: 'delete',
                   child: Row(
                     children: [
-                      Icon(Icons.delete, color: Colors.red),
+                      Icon(Icons.delete_rounded, color: Color(0xFFFF6B6B)),
                       SizedBox(width: 8),
-                      Text('Delete Goal', style: TextStyle(color: Colors.red)),
+                      Text('Delete Goal', style: TextStyle(color: Color(0xFFFF6B6B))),
                     ],
                   ),
                 ),
@@ -272,8 +279,9 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
           bottom: TabBar(
             controller: _tabController,
             labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            indicatorColor: Colors.white,
+            unselectedLabelColor: Colors.white54,
+            indicatorColor: const Color(0xFF6C63FF),
+            indicatorWeight: 3,
             tabs: const [
               Tab(text: 'Overview'),
               Tab(text: 'Progress'),
@@ -281,13 +289,25 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
             ],
           ),
         ),
-        body: TabBarView(
-          controller: _tabController,
-          children: [
-            _buildOverviewTab(),
-            _buildProgressTab(),
-            _buildReflectionTab(),
-          ],
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0xFF000000),
+                Color(0xFF111111),
+              ],
+            ),
+          ),
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              _buildOverviewTab(),
+              _buildProgressTab(),
+              _buildReflectionTab(),
+            ],
+          ),
         ),
       ),
     );
@@ -295,151 +315,171 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
 
   Widget _buildOverviewTab() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Status Card
+          // Status Card with enhanced design
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: goal.isCompleted 
-                    ? [Colors.green.shade400, Colors.green.shade600]
-                    : [const Color(0xFF667eea), const Color(0xFF764ba2)],
+                    ? [const Color(0xFF4ECDC4), const Color(0xFF44A08D)]
+                    : [const Color(0xFF6C63FF), const Color(0xFF9C88FF)],
               ),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: (goal.isCompleted 
+                      ? const Color(0xFF4ECDC4) 
+                      : const Color(0xFF6C63FF)).withOpacity(0.3),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
             ),
-            child: Card(
-              color: Colors.transparent,
-              elevation: 0,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          goal.isCompleted ? Icons.check_circle : Icons.flag,
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Icon(
+                          goal.isCompleted ? Icons.check_circle_rounded : Icons.flag_rounded,
                           color: Colors.white,
                           size: 32,
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                goal.title,
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              goal.title,
+                              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
                               ),
-                              Text(
-                                goal.categoryDisplayName,
-                                style: const TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            goal.isOnTrack ? 'On Track' : 'Behind',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
                             ),
+                            const SizedBox(height: 4),
+                            Text(
+                              goal.categoryDisplayName,
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: Colors.white70,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          goal.isOnTrack ? 'On Track' : 'Behind',
+                          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                      ],
-                    ),
-                    
-                    const SizedBox(height: 16),
-                    
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildStatItem(
-                            'Execution Score',
-                            '${goal.executionScore.toInt()}%',
-                            Icons.trending_up,
-                            Colors.white,
-                          ),
+                      ),
+                    ],
+                  ),
+                  
+                  const SizedBox(height: 24),
+                  
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildStatItem(
+                          'Execution Score',
+                          '${goal.executionScore.toInt()}%',
+                          Icons.trending_up_rounded,
+                          Colors.white,
                         ),
-                        Expanded(
-                          child: _buildStatItem(
-                            'Weeks Complete',
-                            '${goal.completedWeeks}/12',
-                            Icons.calendar_today,
-                            Colors.white,
-                          ),
+                      ),
+                      Expanded(
+                        child: _buildStatItem(
+                          'Weeks Complete',
+                          '${goal.completedWeeks}/12',
+                          Icons.calendar_today_rounded,
+                          Colors.white,
                         ),
-                        Expanded(
-                          child: _buildStatItem(
-                            'Days Left',
-                            '${goal.daysRemaining}',
-                            Icons.timer,
-                            Colors.white,
-                          ),
+                      ),
+                      Expanded(
+                        child: _buildStatItem(
+                          'Days Left',
+                          '${goal.daysRemaining}',
+                          Icons.timer_rounded,
+                          Colors.white,
                         ),
-                      ],
-                    ),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),
           
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
           
-          // Timeline
-          Card(
+          // Timeline Card
+          Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFF111111),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Timeline',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildTimelineItem(
+                    Icons.play_arrow_rounded,
+                    'Started',
+                    DateFormat('MMM dd, yyyy').format(goal.startDate),
+                    const Color(0xFF4ECDC4),
                   ),
                   const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      const Icon(Icons.play_arrow, color: Colors.green, size: 20),
-                      const SizedBox(width: 8),
-                      Text('Started: ${DateFormat('MMM dd, yyyy').format(goal.startDate)}'),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      const Icon(Icons.flag, color: Colors.red, size: 20),
-                      const SizedBox(width: 8),
-                      Text('Target: ${DateFormat('MMM dd, yyyy').format(goal.endDate)}'),
-                    ],
+                  _buildTimelineItem(
+                    Icons.flag_rounded,
+                    'Target',
+                    DateFormat('MMM dd, yyyy').format(goal.endDate),
+                    const Color(0xFFFF6B6B),
                   ),
                   if (goal.isCompleted && goal.completedDate != null) ...[
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(Icons.check_circle, color: Colors.green, size: 20),
-                        const SizedBox(width: 8),
-                        Text('Completed: ${DateFormat('MMM dd, yyyy').format(goal.completedDate!)}'),
-                      ],
+                    const SizedBox(height: 12),
+                    _buildTimelineItem(
+                      Icons.check_circle_rounded,
+                      'Completed',
+                      DateFormat('MMM dd, yyyy').format(goal.completedDate!),
+                      const Color(0xFF4ECDC4),
                     ),
                   ],
                 ],
@@ -447,96 +487,101 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
             ),
           ),
           
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
           
           // Description
           if (goal.description.isNotEmpty) ...[
-            const Text(
+            _buildInfoCard(
               'Description',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              goal.description,
+              Icons.description_rounded,
+              const Color(0xFF6C63FF),
             ),
-            const SizedBox(height: 8),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Text(goal.description),
-              ),
-            ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
           ],
           
           // Vision
           if (goal.vision != null && goal.vision!.isNotEmpty) ...[
-            const Text(
+            _buildInfoCard(
               'Vision',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              goal.vision!,
+              Icons.visibility_rounded,
+              const Color(0xFF9C88FF),
             ),
-            const SizedBox(height: 8),
-            Card(
-              color: Colors.blue.withOpacity(0.1),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.visibility, color: Colors.blue[700]),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Your Vision',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue[700],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Text(goal.vision!),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
           ],
           
           // Why Reasons
           if (goal.whyReasons.isNotEmpty) ...[
-            const Text(
-              'Why This Matters',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Card(
-              color: Colors.orange.withOpacity(0.1),
+            Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFF111111),
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.psychology, color: Colors.orange[700]),
-                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFFFFB74D), Color(0xFFFF9800)],
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(Icons.psychology_rounded, color: Colors.white, size: 20),
+                        ),
+                        const SizedBox(width: 12),
                         Text(
-                          'Your Reasons',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.orange[700],
+                          'Why This Matters',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 16),
                     ...goal.whyReasons.asMap().entries.map((entry) {
                       return Padding(
-                        padding: const EdgeInsets.only(bottom: 4),
+                        padding: const EdgeInsets.only(bottom: 8),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('${entry.key + 1}. '),
-                            Expanded(child: Text(entry.value)),
+                            Container(
+                              width: 24,
+                              height: 24,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFFFB74D).withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '${entry.key + 1}',
+                                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                    color: const Color(0xFFFFB74D),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                entry.value,
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                            ),
                           ],
                         ),
                       );
@@ -553,7 +598,7 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
 
   Widget _buildProgressTab() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -563,9 +608,11 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
           const SizedBox(height: 24),
           
           // Weekly Breakdown
-          const Text(
+          Text(
             'Week by Week',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
           ),
           const SizedBox(height: 16),
           
@@ -578,25 +625,46 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
                 ? (completedActions / weekActions.length) * 100 
                 : 0.0;
             
-            return Card(
-              margin: const EdgeInsets.only(bottom: 8),
-              color: isCurrent ? const Color(0xFF667eea).withOpacity(0.1) : null,
+            return Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF111111),
+                borderRadius: BorderRadius.circular(16),
+                border: isCurrent 
+                    ? Border.all(color: const Color(0xFF6C63FF), width: 2)
+                    : null,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
               child: ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: isCompleted 
-                      ? Colors.green 
-                      : isCurrent 
-                          ? const Color(0xFF667eea)
-                          : Colors.grey.withOpacity(0.3),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                leading: Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: isCompleted 
+                          ? [const Color(0xFF4ECDC4), const Color(0xFF44A08D)]
+                          : isCurrent 
+                              ? [const Color(0xFF6C63FF), const Color(0xFF9C88FF)]
+                              : [Colors.grey.shade700, Colors.grey.shade600],
+                    ),
+                    borderRadius: BorderRadius.circular(24),
+                  ),
                   child: Icon(
-                    isCompleted ? Icons.check : Icons.calendar_today,
-                    color: isCompleted || isCurrent ? Colors.white : Colors.grey,
+                    isCompleted ? Icons.check_rounded : Icons.calendar_today_rounded,
+                    color: Colors.white,
                   ),
                 ),
                 title: Text(
                   'Week ${index + 1}',
-                  style: TextStyle(
-                    fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w500,
                   ),
                 ),
                 subtitle: Column(
@@ -606,27 +674,35 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
                       weekActions.isEmpty 
                           ? 'No actions planned'
                           : '$completedActions/${weekActions.length} actions completed',
+                      style: Theme.of(context).textTheme.bodySmall,
                     ),
                     if (weekActions.isNotEmpty)
                       Text(
                         'Score: ${weekScore.toInt()}%',
-                        style: TextStyle(
-                          color: weekScore >= goal.targetScore ? Colors.green : Colors.red,
-                          fontWeight: FontWeight.bold,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: weekScore >= goal.targetScore 
+                              ? const Color(0xFF4ECDC4) 
+                              : const Color(0xFFFF6B6B),
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                   ],
                 ),
                 trailing: isCurrent 
                     ? Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF667eea),
-                          borderRadius: BorderRadius.circular(12),
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF6C63FF), Color(0xFF9C88FF)],
+                          ),
+                          borderRadius: BorderRadius.circular(16),
                         ),
-                        child: const Text(
+                        child: Text(
                           'Current',
-                          style: TextStyle(color: Colors.white, fontSize: 12),
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       )
                     : null,
@@ -645,87 +721,126 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
       child: Column(
         children: [
           Container(
-            color: Theme.of(context).colorScheme.primary,
+            color: const Color(0xFF111111),
             child: TabBar(
               isScrollable: true,
               labelColor: Colors.white,
-              unselectedLabelColor: Colors.white70,
-              indicatorColor: Colors.white,
+              unselectedLabelColor: Colors.white54,
+              indicatorColor: const Color(0xFF6C63FF),
+              indicatorWeight: 3,
               tabs: List.generate(12, (index) => Tab(text: 'W${index + 1}')),
             ),
           ),
           Expanded(
             child: TabBarView(
               children: List.generate(12, (weekIndex) {
-                return SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Week ${weekIndex + 1} Reflection',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                return Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Color(0xFF000000),
+                        Color(0xFF111111),
+                      ],
+                    ),
+                  ),
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Week ${weekIndex + 1} Reflection',
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                      
-                      TextField(
-                        maxLines: 10,
-                        decoration: const InputDecoration(
-                          hintText: 'What did you learn this week?\nWhat worked well?\nWhat would you do differently?\nHow did you feel about your progress?',
-                          border: OutlineInputBorder(),
+                        const SizedBox(height: 20),
+                        
+                        Container(
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF111111),
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.3),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: TextField(
+                            maxLines: 12,
+                            decoration: const InputDecoration(
+                              hintText: 'What did you learn this week?\nWhat worked well?\nWhat would you do differently?\nHow did you feel about your progress?',
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.all(20),
+                            ),
+                            controller: _reflectionControllers[weekIndex],
+                            focusNode: _reflectionFocusNodes[weekIndex],
+                            onChanged: (value) {
+                              // Only update the reflection text, don't save immediately
+                              _saveReflection(weekIndex, value);
+                            },
+                            onEditingComplete: () {
+                              // Save when user finishes editing (presses done/enter)
+                              _reflectionFocusNodes[weekIndex].unfocus();
+                            },
+                          ),
                         ),
-                        controller: _reflectionControllers[weekIndex],
-                        focusNode: _reflectionFocusNodes[weekIndex],
-                        onChanged: (value) {
-                          // Only update the reflection text, don't save immediately
-                          _saveReflection(weekIndex, value);
-                        },
-                        onEditingComplete: () {
-                          // Save when user finishes editing (presses done/enter)
-                          _reflectionFocusNodes[weekIndex].unfocus();
-                        },
-                      ),
-                      
-                      const SizedBox(height: 16),
-                      
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.blue.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(Icons.lightbulb, color: Colors.blue[700]),
-                                const SizedBox(width: 8),
-                                Text(
-                                  'Reflection Prompts',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.blue[700],
-                                  ),
-                                ),
+                        
+                        const SizedBox(height: 20),
+                        
+                        Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                const Color(0xFF6C63FF).withOpacity(0.1),
+                                const Color(0xFF9C88FF).withOpacity(0.1),
                               ],
                             ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              '• What specific actions moved you closer to your goal?\n'
-                              '• What obstacles did you encounter and how did you handle them?\n'
-                              '• What patterns are you noticing in your behavior?\n'
-                              '• How can you improve your execution next week?\n'
-                              '• What are you most proud of this week?',
-                              style: TextStyle(fontSize: 14),
-                            ),
-                          ],
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      gradient: const LinearGradient(
+                                        colors: [Color(0xFF6C63FF), Color(0xFF9C88FF)],
+                                      ),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: const Icon(Icons.lightbulb_rounded, color: Colors.white, size: 20),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    'Reflection Prompts',
+                                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                '• What specific actions moved you closer to your goal?\n'
+                                '• What obstacles did you encounter and how did you handle them?\n'
+                                '• What patterns are you noticing in your behavior?\n'
+                                '• How can you improve your execution next week?\n'
+                                '• What are you most proud of this week?',
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 );
               }),
@@ -739,25 +854,99 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
   Widget _buildStatItem(String label, String value, IconData icon, Color color) {
     return Column(
       children: [
-        Icon(icon, color: color),
-        const SizedBox(height: 4),
+        Icon(icon, color: color, size: 24),
+        const SizedBox(height: 8),
         Text(
           value,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w700,
             color: color,
           ),
         ),
         Text(
           label,
-          style: TextStyle(
-            fontSize: 12,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
             color: color.withOpacity(0.8),
           ),
           textAlign: TextAlign.center,
         ),
       ],
+    );
+  }
+
+  Widget _buildTimelineItem(IconData icon, String title, String date, Color color) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, color: color, size: 20),
+        ),
+        const SizedBox(width: 12),
+        Text(
+          '$title: ',
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        Text(
+          date,
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInfoCard(String title, String content, IconData icon, Color color) {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF111111),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [color, color.withOpacity(0.7)],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: Colors.white, size: 20),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              content,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -772,12 +961,24 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
             onPressed: () => Navigator.pop(context),
             child: const Text('Cancel'),
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context); // Close dialog
-              _deleteGoal(); // Delete and return to previous screen
-            },
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFFFF6B6B), Color(0xFFFF5252)],
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context); // Close dialog
+                _deleteGoal(); // Delete and return to previous screen
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+              ),
+              child: const Text('Delete', style: TextStyle(color: Colors.white)),
+            ),
           ),
         ],
       ),
@@ -785,7 +986,7 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
   }
 }
 
-// Goal Edit Wizard
+// Goal Edit Wizard with enhanced design
 class GoalEditWizard extends StatefulWidget {
   final Goal goal;
 
@@ -841,7 +1042,10 @@ class _GoalEditWizardState extends State<GoalEditWizard> {
   void _saveGoal() {
     if (_titleController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a goal title')),
+        SnackBar(
+          content: const Text('Please enter a goal title'),
+          backgroundColor: const Color(0xFFFF6B6B),
+        ),
       );
       return;
     }
@@ -876,124 +1080,175 @@ class _GoalEditWizardState extends State<GoalEditWizard> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Goal'),
-        backgroundColor: isDark ? const Color(0xFF1E1E1E) : const Color(0xFF667eea),
-        foregroundColor: Colors.white,
         actions: [
-          TextButton(
-            onPressed: _saveGoal,
-            child: const Text(
-              'Save',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF6C63FF), Color(0xFF9C88FF)],
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+            child: TextButton(
+              onPressed: _saveGoal,
+              child: const Text(
+                'Save',
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
             ),
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextField(
-              controller: _titleController,
-              decoration: const InputDecoration(
-                labelText: 'Goal Title',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            
-            const SizedBox(height: 16),
-            
-            TextField(
-              controller: _descriptionController,
-              decoration: const InputDecoration(
-                labelText: 'Description',
-                border: OutlineInputBorder(),
-              ),
-              maxLines: 3,
-            ),
-            
-            const SizedBox(height: 16),
-            
-            const Text('Category', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: GoalCategory.values.map((category) {
-                final isSelected = _category == category;
-                return FilterChip(
-                  label: Text(Goal(title: '', startDate: DateTime.now(), category: category).categoryDisplayName),
-                  selected: isSelected,
-                  onSelected: (selected) {
-                    if (selected) setState(() => _category = category);
-                  },
-                  selectedColor: const Color(0xFF667eea).withOpacity(0.2),
-                  checkmarkColor: const Color(0xFF667eea),
-                );
-              }).toList(),
-            ),
-            
-            const SizedBox(height: 16),
-            
-            const Text('Priority', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            ...Priority.values.map((priority) {
-              return RadioListTile<Priority>(
-                title: Text(priority.name.toUpperCase()),
-                value: priority,
-                groupValue: _priority,
-                onChanged: (value) {
-                  if (value != null) setState(() => _priority = value);
-                },
-                activeColor: const Color(0xFF667eea),
-              );
-            }),
-            
-            const SizedBox(height: 16),
-            
-            TextField(
-              controller: _visionController,
-              decoration: const InputDecoration(
-                labelText: 'Vision Statement',
-                border: OutlineInputBorder(),
-              ),
-              maxLines: 3,
-            ),
-            
-            const SizedBox(height: 16),
-            
-            const Text('Why Reasons', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            ...List.generate(3, (index) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: TextField(
-                  controller: _whyControllers[index],
-                  decoration: InputDecoration(
-                    labelText: 'Reason ${index + 1}',
-                    border: const OutlineInputBorder(),
-                  ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF000000),
+              Color(0xFF111111),
+            ],
+          ),
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: _titleController,
+                decoration: const InputDecoration(
+                  labelText: 'Goal Title',
                 ),
-              );
-            }),
-            
-            const SizedBox(height: 16),
-            
-            const Text('Target Execution Score', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            Slider(
-              value: _targetScore,
-              min: 50,
-              max: 100,
-              divisions: 10,
-              label: '${_targetScore.toInt()}%',
-              activeColor: const Color(0xFF667eea),
-              onChanged: (value) => setState(() => _targetScore = value),
-            ),
-          ],
+              ),
+              
+              const SizedBox(height: 20),
+              
+              TextField(
+                controller: _descriptionController,
+                decoration: const InputDecoration(
+                  labelText: 'Description',
+                ),
+                maxLines: 3,
+              ),
+              
+              const SizedBox(height: 24),
+              
+              Text(
+                'Category',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: GoalCategory.values.map((category) {
+                  final isSelected = _category == category;
+                  return FilterChip(
+                    label: Text(Goal(title: '', startDate: DateTime.now(), category: category).categoryDisplayName),
+                    selected: isSelected,
+                    onSelected: (selected) {
+                      if (selected) setState(() => _category = category);
+                    },
+                    selectedColor: const Color(0xFF6C63FF).withOpacity(0.2),
+                    checkmarkColor: const Color(0xFF6C63FF),
+                  );
+                }).toList(),
+              ),
+              
+              const SizedBox(height: 24),
+              
+              Text(
+                'Priority',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              ...Priority.values.map((priority) {
+                return RadioListTile<Priority>(
+                  title: Text(priority.name.toUpperCase()),
+                  value: priority,
+                  groupValue: _priority,
+                  onChanged: (value) {
+                    if (value != null) setState(() => _priority = value);
+                  },
+                  activeColor: const Color(0xFF6C63FF),
+                );
+              }),
+              
+              const SizedBox(height: 20),
+              
+              TextField(
+                controller: _visionController,
+                decoration: const InputDecoration(
+                  labelText: 'Vision Statement',
+                ),
+                maxLines: 3,
+              ),
+              
+              const SizedBox(height: 24),
+              
+              Text(
+                'Why Reasons',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 12),
+              ...List.generate(3, (index) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: TextField(
+                    controller: _whyControllers[index],
+                    decoration: InputDecoration(
+                      labelText: 'Reason ${index + 1}',
+                    ),
+                  ),
+                );
+              }),
+              
+              const SizedBox(height: 24),
+              
+              Text(
+                'Target Execution Score',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF111111),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      '${_targetScore.toInt()}%',
+                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                        color: const Color(0xFF6C63FF),
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Slider(
+                      value: _targetScore,
+                      min: 50,
+                      max: 100,
+                      divisions: 10,
+                      activeColor: const Color(0xFF6C63FF),
+                      onChanged: (value) => setState(() => _targetScore = value),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
