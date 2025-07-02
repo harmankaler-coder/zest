@@ -14,32 +14,32 @@ class GoalCardEnhanced extends StatelessWidget {
   Color _getPriorityColor() {
     switch (goal.priority) {
       case Priority.high:
-        return Colors.red;
+        return const Color(0xFFFF6B6B);
       case Priority.medium:
-        return Colors.orange;
+        return const Color(0xFFFFB74D);
       case Priority.low:
-        return Colors.green;
+        return const Color(0xFF4ECDC4);
     }
   }
 
   Color _getCategoryColor() {
     switch (goal.category) {
       case GoalCategory.personal:
-        return const Color(0xFF667eea);
+        return const Color(0xFF6C63FF);
       case GoalCategory.professional:
-        return const Color(0xFF764ba2);
+        return const Color(0xFF9C88FF);
       case GoalCategory.health:
-        return Colors.green;
+        return const Color(0xFF4ECDC4);
       case GoalCategory.financial:
-        return Colors.amber;
+        return const Color(0xFFFFB74D);
       case GoalCategory.relationships:
-        return Colors.pink;
+        return const Color(0xFFFF6B9D);
       case GoalCategory.learning:
-        return Colors.teal;
+        return const Color(0xFF4ECDC4);
       case GoalCategory.spiritual:
-        return Colors.deepPurple;
+        return const Color(0xFF9C88FF);
       case GoalCategory.other:
-        return Colors.grey;
+        return const Color(0xFF8E8E93);
     }
   }
 
@@ -50,217 +50,230 @@ class GoalCardEnhanced extends StatelessWidget {
     final currentWeek = goal.currentWeek;
     final daysRemaining = goal.daysRemaining;
 
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header with title and priority
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      goal.title,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: goal.isCompleted ? Colors.grey : Colors.black87,
-                        decoration: goal.isCompleted 
-                            ? TextDecoration.lineThrough 
-                            : null,
+      decoration: BoxDecoration(
+        color: const Color(0xFF111111),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(20),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header with title and priority
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        goal.title,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: goal.isCompleted ? Colors.white54 : Colors.white,
+                          decoration: goal.isCompleted 
+                              ? TextDecoration.lineThrough 
+                              : null,
+                        ),
                       ),
                     ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: _getPriorityColor().withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: _getPriorityColor(), width: 1),
-                    ),
-                    child: Text(
-                      goal.priority.name.toUpperCase(),
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: _getPriorityColor(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            _getPriorityColor(),
+                            _getPriorityColor().withOpacity(0.7),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text(
+                        goal.priority.name.toUpperCase(),
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                          letterSpacing: 0.5,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              
-              const SizedBox(height: 8),
-              
-              // Category and week info
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: _getCategoryColor().withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
+                  ],
+                ),
+                
+                const SizedBox(height: 12),
+                
+                // Category and week info
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: _getCategoryColor().withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        goal.categoryDisplayName,
+                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                          color: _getCategoryColor(),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
-                    child: Text(
-                      goal.categoryDisplayName,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: _getCategoryColor(),
+                    const Spacer(),
+                    Text(
+                      'Week ${currentWeek + 1}/12',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.white70,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                  ),
-                  const Spacer(),
-                  Text(
-                    'Week ${currentWeek + 1}/12',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-              
-              const SizedBox(height: 12),
-              
-              // Progress bar
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Progress: ${goal.completedWeeks}/12 weeks',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      Text(
-                        '${(goal.progress * 100).toInt()}%',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Container(
-                    height: 6,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(3),
-                      gradient: LinearGradient(
-                        colors: goal.isCompleted 
-                            ? [Colors.green, Colors.green]
-                            : [const Color(0xFF667eea), const Color(0xFF764ba2)],
-                      ),
-                    ),
-                    child: LinearProgressIndicator(
-                      value: goal.progress,
-                      backgroundColor: Colors.grey[300],
-                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.transparent),
-                      minHeight: 6,
-                    ),
-                  ),
-                ],
-              ),
-              
-              const SizedBox(height: 12),
-              
-              // Execution score and status
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Execution Score',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              '${executionScore.toInt()}%',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: isOnTrack ? Colors.green : Colors.red,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            Icon(
-                              isOnTrack ? Icons.trending_up : Icons.trending_down,
-                              size: 16,
-                              color: isOnTrack ? Colors.green : Colors.red,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (!goal.isCompleted)
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          'Days Remaining',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                        Text(
-                          '$daysRemaining',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: daysRemaining < 14 ? Colors.red : Colors.black87,
-                          ),
-                        ),
-                      ],
-                    ),
-                ],
-              ),
-              
-              if (goal.isCompleted)
-                Container(
-                  margin: const EdgeInsets.only(top: 8),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.green.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.check_circle, color: Colors.green, size: 16),
-                      const SizedBox(width: 4),
-                      Text(
-                        'Completed',
-                        style: TextStyle(
-                          color: Colors.green[700],
-                          fontWeight: FontWeight.w500,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
+                  ],
                 ),
-            ],
+                
+                const SizedBox(height: 16),
+                
+                // Progress bar
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Progress: ${goal.completedWeeks}/12 weeks',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          '${(goal.progress * 100).toInt()}%',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      height: 8,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        color: Colors.white12,
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: LinearProgressIndicator(
+                          value: goal.progress,
+                          backgroundColor: Colors.transparent,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            goal.isCompleted 
+                                ? const Color(0xFF4ECDC4)
+                                : const Color(0xFF6C63FF),
+                          ),
+                          minHeight: 8,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Execution score and status
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Execution Score',
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Colors.white70,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              Text(
+                                '${executionScore.toInt()}%',
+                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: isOnTrack ? const Color(0xFF4ECDC4) : const Color(0xFFFF6B6B),
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Icon(
+                                isOnTrack ? Icons.trending_up_rounded : Icons.trending_down_rounded,
+                                size: 18,
+                                color: isOnTrack ? const Color(0xFF4ECDC4) : const Color(0xFFFF6B6B),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (!goal.isCompleted)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            'Days Remaining',
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Colors.white70,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '$daysRemaining',
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: daysRemaining < 14 ? const Color(0xFFFF6B6B) : Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                  ],
+                ),
+                
+                if (goal.isCompleted)
+                  Container(
+                    margin: const EdgeInsets.only(top: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF4ECDC4), Color(0xFF44A08D)],
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.check_circle_rounded, color: Colors.white, size: 16),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Completed',
+                          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
       ),
