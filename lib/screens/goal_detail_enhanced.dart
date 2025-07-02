@@ -18,18 +18,20 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
   late TabController _tabController;
   late Goal goal;
   final List<TextEditingController> _reflectionControllers = [];
+  final List<FocusNode> _reflectionFocusNodes = [];
 
   @override
   void initState() {
     super.initState();
     goal = widget.goal;
-    _tabController = TabController(length: 3, vsync: this); // Changed from 4 to 3
+    _tabController = TabController(length: 3, vsync: this);
     
-    // Initialize reflection controllers
+    // Initialize reflection controllers and focus nodes
     for (int i = 0; i < 12; i++) {
       _reflectionControllers.add(
         TextEditingController(text: goal.weeklyReflections[i])
       );
+      _reflectionFocusNodes.add(FocusNode());
     }
   }
 
@@ -38,6 +40,9 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
     _tabController.dispose();
     for (var controller in _reflectionControllers) {
       controller.dispose();
+    }
+    for (var focusNode in _reflectionFocusNodes) {
+      focusNode.dispose();
     }
     super.dispose();
   }
@@ -200,9 +205,14 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
     }
   }
 
-  void _updateReflection(int weekIndex, String reflection) {
+  void _saveReflection(int weekIndex, String reflection) {
+    // Update the goal's reflection without triggering navigation
     goal.weeklyReflections[weekIndex] = reflection;
-    // Save immediately when reflection is updated
+    // Don't call _updateGoal() here to prevent navigation
+  }
+
+  void _saveAllReflections() {
+    // Save all reflections when leaving the screen
     _updateGoal();
   }
 
@@ -210,68 +220,75 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(goal.title),
-        backgroundColor: isDark ? const Color(0xFF1E1E1E) : const Color(0xFF667eea),
-        foregroundColor: Colors.white,
-        actions: [
-          IconButton(
-            icon: Icon(goal.isCompleted ? Icons.undo : Icons.check),
-            onPressed: _toggleGoalCompletion,
-            tooltip: goal.isCompleted ? 'Mark as Incomplete' : 'Mark as Complete',
-          ),
-          PopupMenuButton(
-            itemBuilder: (context) => [
-              const PopupMenuItem(
-                value: 'edit',
-                child: Row(
-                  children: [
-                    Icon(Icons.edit),
-                    SizedBox(width: 8),
-                    Text('Edit Goal'),
-                  ],
+    return WillPopScope(
+      onWillPop: () async {
+        // Save all reflections when user tries to leave the screen
+        _saveAllReflections();
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(goal.title),
+          backgroundColor: isDark ? const Color(0xFF1E1E1E) : const Color(0xFF667eea),
+          foregroundColor: Colors.white,
+          actions: [
+            IconButton(
+              icon: Icon(goal.isCompleted ? Icons.undo : Icons.check),
+              onPressed: _toggleGoalCompletion,
+              tooltip: goal.isCompleted ? 'Mark as Incomplete' : 'Mark as Complete',
+            ),
+            PopupMenuButton(
+              itemBuilder: (context) => [
+                const PopupMenuItem(
+                  value: 'edit',
+                  child: Row(
+                    children: [
+                      Icon(Icons.edit),
+                      SizedBox(width: 8),
+                      Text('Edit Goal'),
+                    ],
+                  ),
                 ),
-              ),
-              const PopupMenuItem(
-                value: 'delete',
-                child: Row(
-                  children: [
-                    Icon(Icons.delete, color: Colors.red),
-                    SizedBox(width: 8),
-                    Text('Delete Goal', style: TextStyle(color: Colors.red)),
-                  ],
+                const PopupMenuItem(
+                  value: 'delete',
+                  child: Row(
+                    children: [
+                      Icon(Icons.delete, color: Colors.red),
+                      SizedBox(width: 8),
+                      Text('Delete Goal', style: TextStyle(color: Colors.red)),
+                    ],
+                  ),
                 ),
-              ),
+              ],
+              onSelected: (value) {
+                if (value == 'delete') {
+                  _showDeleteConfirmation();
+                } else if (value == 'edit') {
+                  _editGoal();
+                }
+              },
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white70,
+            indicatorColor: Colors.white,
+            tabs: const [
+              Tab(text: 'Overview'),
+              Tab(text: 'Progress'),
+              Tab(text: 'Reflection'),
             ],
-            onSelected: (value) {
-              if (value == 'delete') {
-                _showDeleteConfirmation();
-              } else if (value == 'edit') {
-                _editGoal();
-              }
-            },
           ),
-        ],
-        bottom: TabBar(
+        ),
+        body: TabBarView(
           controller: _tabController,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
-          indicatorColor: Colors.white,
-          tabs: const [
-            Tab(text: 'Overview'),
-            Tab(text: 'Progress'),
-            Tab(text: 'Reflection'),
+          children: [
+            _buildOverviewTab(),
+            _buildProgressTab(),
+            _buildReflectionTab(),
           ],
         ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          _buildOverviewTab(),
-          _buildProgressTab(),
-          _buildReflectionTab(),
-        ],
       ),
     );
   }
@@ -661,7 +678,15 @@ class _GoalDetailEnhancedState extends State<GoalDetailEnhanced>
                           border: OutlineInputBorder(),
                         ),
                         controller: _reflectionControllers[weekIndex],
-                        onChanged: (value) => _updateReflection(weekIndex, value),
+                        focusNode: _reflectionFocusNodes[weekIndex],
+                        onChanged: (value) {
+                          // Only update the reflection text, don't save immediately
+                          _saveReflection(weekIndex, value);
+                        },
+                        onEditingComplete: () {
+                          // Save when user finishes editing (presses done/enter)
+                          _reflectionFocusNodes[weekIndex].unfocus();
+                        },
                       ),
                       
                       const SizedBox(height: 16),
