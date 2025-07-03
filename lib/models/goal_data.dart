@@ -30,6 +30,22 @@ class WeeklyAction {
     this.notes,
   });
 
+  // Check if action should be automatically unticked (after 24 hours)
+  bool get shouldAutoUntick {
+    if (!isCompleted || completedDate == null) return false;
+    final now = DateTime.now();
+    final hoursSinceCompletion = now.difference(completedDate!).inHours;
+    return hoursSinceCompletion >= 24;
+  }
+
+  // Auto-untick if 24 hours have passed
+  void checkAndAutoUntick() {
+    if (shouldAutoUntick) {
+      isCompleted = false;
+      completedDate = null;
+    }
+  }
+
   Map<String, dynamic> toJson() => {
     'id': id,
     'description': description,
@@ -38,15 +54,22 @@ class WeeklyAction {
     'notes': notes,
   };
 
-  factory WeeklyAction.fromJson(Map<String, dynamic> json) => WeeklyAction(
-    id: json['id'] ?? DateTime.now().millisecondsSinceEpoch.toString(),
-    description: json['description'] ?? '',
-    isCompleted: json['isCompleted'] ?? false,
-    completedDate: json['completedDate'] != null 
-        ? DateTime.parse(json['completedDate']) 
-        : null,
-    notes: json['notes'],
-  );
+  factory WeeklyAction.fromJson(Map<String, dynamic> json) {
+    final action = WeeklyAction(
+      id: json['id'] ?? DateTime.now().millisecondsSinceEpoch.toString(),
+      description: json['description'] ?? '',
+      isCompleted: json['isCompleted'] ?? false,
+      completedDate: json['completedDate'] != null 
+          ? DateTime.parse(json['completedDate']) 
+          : null,
+      notes: json['notes'],
+    );
+    
+    // Auto-untick if 24 hours have passed
+    action.checkAndAutoUntick();
+    
+    return action;
+  }
 }
 
 class Goal {
@@ -87,6 +110,15 @@ class Goal {
     weeklyReflections = List.filled(12, ''),
     whyReasons = whyReasons ?? [];
 
+  // Auto-untick all actions that are older than 24 hours
+  void autoUntickExpiredActions() {
+    for (var weekActions in weeklyActions) {
+      for (var action in weekActions) {
+        action.checkAndAutoUntick();
+      }
+    }
+  }
+
   int get completedWeeks => weeklyProgress.where((completed) => completed).length;
   
   double get progress {
@@ -106,6 +138,9 @@ class Goal {
   }
 
   double get executionScore {
+    // Auto-untick expired actions before calculating score
+    autoUntickExpiredActions();
+    
     if (weeklyActions.isEmpty) return 0.0;
     
     int totalActions = 0;
@@ -225,6 +260,9 @@ class Goal {
       goal.weeklyReflections = List.generate(12, (index) => 
           index < reflectionsList.length ? reflectionsList[index].toString() : '');
     }
+
+    // Auto-untick expired actions after loading
+    goal.autoUntickExpiredActions();
 
     return goal;
   }

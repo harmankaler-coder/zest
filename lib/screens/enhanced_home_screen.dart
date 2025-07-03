@@ -29,10 +29,19 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
   Future<void> _loadGoals() async {
     setState(() => isLoading = true);
     final loadedGoals = await StorageService.loadGoals();
+    
+    // Auto-untick expired actions for all goals
+    for (var goal in loadedGoals) {
+      goal.autoUntickExpiredActions();
+    }
+    
     setState(() {
       goals = loadedGoals;
       isLoading = false;
     });
+    
+    // Save goals if any actions were auto-unticked
+    await StorageService.saveGoals(goals);
   }
 
   Future<void> _saveGoals() async {
@@ -47,6 +56,9 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
   }
 
   void _updateGoal(Goal updatedGoal) {
+    // Auto-untick expired actions before updating
+    updatedGoal.autoUntickExpiredActions();
+    
     setState(() {
       final index = goals.indexWhere((g) => g.id == updatedGoal.id);
       if (index != -1) {
