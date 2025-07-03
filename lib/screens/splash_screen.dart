@@ -26,7 +26,7 @@ class SplashScreen extends StatelessWidget {
             padding: const EdgeInsets.all(32.0),
             child: Column(
               children: [
-                const Spacer(flex: 2),
+                const SizedBox(height: 60),
                 
                 // Logo and Title Section
                 Column(
@@ -99,7 +99,7 @@ class SplashScreen extends StatelessWidget {
                   ],
                 ),
                 
-                const Spacer(flex: 1),
+                const SizedBox(height: 40),
                 
                 // Features Section with enhanced design
                 Column(
@@ -127,7 +127,7 @@ class SplashScreen extends StatelessWidget {
                   ],
                 ),
                 
-                const Spacer(flex: 2),
+                const SizedBox(height: 60),
                 
                 // Get Started Button with enhanced design
                 Column(
@@ -182,7 +182,7 @@ class SplashScreen extends StatelessWidget {
                   ],
                 ),
                 
-                const Spacer(flex: 1),
+                const SizedBox(height: 40),
               ],
             ),
           ),
